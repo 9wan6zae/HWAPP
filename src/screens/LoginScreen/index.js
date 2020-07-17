@@ -11,7 +11,7 @@ import {widthPercentageToDP as wp, heightPercentageToDP as hp} from 'react-nativ
 export default class LoginScreen extends Component{
     
     static navigationOptions = {
-        header: null,
+        headerShown: false,
     };
 
     _doLogin(){

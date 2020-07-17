@@ -17,8 +17,9 @@ const HomeStack = createStackNavigator(
   {
     defaultNavigationOptions: ({ navigation }) => ({
       title: "Home",
+      headerShown: false
     }),
-  }
+  },
 );
 const SettingStack = createStackNavigator(
   {
@@ -27,6 +28,7 @@ const SettingStack = createStackNavigator(
   {
     defaultNavigationOptions: ({ navigation }) => ({
       title: "Setting",
+      headerShown: false
     }),
     initialRouteName: "SomethingScreen",
   }
@@ -67,7 +69,6 @@ const TabNavigator = createBottomTabNavigator(
 );
 
 const AppStack = createStackNavigator({
-	LoginScreen: LoginScreen,
   TabNavigator: {
     screen: TabNavigator,
     navigationOptions: ({ navigation }) => ({

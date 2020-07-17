@@ -3,25 +3,22 @@ import {
     View,
     Text,
     ScrollView,
+    Button,
+    Alert,
     StyleSheet
 } from 'react-native';
-import {widthPercentageToDP as wp, heightPercentageToDP as hp} from 'react-native-responsive-screen';
 
 
 export default class HomeScreen extends Component{
     render(){
         return (
-            <ScrollView style={styles.container}>
-                <View style={styles.wrapContent}>
-                    <View style={styles.content}></View>
-                </View>
-                <View style={styles.wrapContent}>
-                    <View style={styles.content}></View>
-                </View>
-                <View style={styles.wrapContent}>
-                    <View style={styles.content}></View>
-                </View>
-            </ScrollView>
+            <View style={styles.container}>
+                <View style={styles.header}/>
+                <View style={styles.title} />
+                <View style={styles.content} />
+                <View style={styles.footer} />
+            </View>
+            
         );
     }
 }
@@ -29,18 +26,35 @@ export default class HomeScreen extends Component{
 const styles = StyleSheet.create({
     container: {
         flex: 1,
-        padding: wp('5%'),
-        backgroundColor: 'white',
-    },
-    wrapContent: {
-        width: wp('90%'),
-        height: wp('90%'),
-        paddingBottom: wp('5%'),
-        
-    },
-    content: {
-        width: "100%",
-        height: "100%",
-        backgroundColor: "#46c3ad",
-    }
+        justifyContent: 'center',
+        //alignItems: 'center',
+        backgroundColor: 'black',
+      },
+      header: {
+        width:'100%',
+        height:'9%',
+        justifyContent: 'center',
+        alignItems: 'center',
+        backgroundColor: '#ff9a9a',
+      },
+      title: {
+        width:'100%',
+        height:'18%',
+        justifyContent: 'center',
+        alignItems: 'center',
+        backgroundColor: '#9aa9ff',
+      },
+      content: {
+        flex: 1,
+        justifyContent: 'center',
+        alignItems: 'center',
+        backgroundColor: '#d6ca1a',
+      },
+      footer: {
+        width:'100%',
+        height:'20%',
+        justifyContent: 'center',
+        alignItems: 'center',
+        backgroundColor: '#1ad657',
+      },
 })
