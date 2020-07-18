@@ -22,7 +22,8 @@ import {
 } from 'react-native';
 import { createAppContainer } from 'react-navigation';
 import { createStackNavigator } from 'react-navigation-stack';
-import RegisterKitScreen from './src/screens/RegisterKitScreens'
+import RegisterKitScreen from './src/screens/RegisterKitScreens';
+import CustomButton from './src/styles/CustomButton';
 
 class HomeScreen extends Component {
   render(){
@@ -33,12 +34,13 @@ class HomeScreen extends Component {
                 <Text style={styles.titleStyle}>HWAPP</Text>
             </View>
             <View style={styles.contentView}>
-                <TouchableOpacity>
-                  <Text
-                    onPress={() => this.props.navigation.navigate('RegisterKitScreen')}>
-                  test
-                  </Text>
-                </TouchableOpacity>
+              <View style={styles.registerView}>
+                <CustomButton
+                  buttonColor={'#023e71'}
+                  title={'키트 등록하기'}
+                  onPress={() => this.props.navigation.navigate('RegisterKitScreen')}
+                />
+              </View>
             </View>
             <View style={styles.footerView} />
         </View>
@@ -85,9 +87,16 @@ const styles = StyleSheet.create({
     },
     contentView: {
       flex: 1,
-      justifyContent: 'center',
       alignItems: 'center',
       backgroundColor: '#d6ca1a',
+      flexDirection: 'column',
+    },
+    registerView: {
+      height: '15%',
+      width: '98%',
+      justifyContent: 'center',
+      alignItems: 'center',
+      backgroundColor: '#FF0000',
     },
     footerView: {
       width:'100%',

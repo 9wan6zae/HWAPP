@@ -6,7 +6,8 @@ import {
     Button,
     Alert,
 		StyleSheet,
-		TouchableOpacity
+    TouchableOpacity,
+    TextInput
 } from 'react-native';
 
 
@@ -28,9 +29,11 @@ export default class RegisterKitScreen extends Component{
                     <Text style={styles.titleStyle}>키트 등록하기</Text>
                 </View>
                 <View style={styles.contentView}>
-                    
+                  <TextInput 
+                    style={styles.textForm} 
+                    placeholder={"시리얼 번호 입력"}/>
                 </View>
-                <View style={styles.footerView} />
+                <View style={styles.QRView} />
             </View>
             
         );
@@ -64,9 +67,9 @@ const styles = StyleSheet.create({
         alignItems: 'center',
         backgroundColor: '#d6ca1a',
       },
-      footerView: {
+      QRView: {
         width:'100%',
-        height:'20%',
+        height:'33%',
         justifyContent: 'center',
         alignItems: 'center',
         backgroundColor: '#1ad657',

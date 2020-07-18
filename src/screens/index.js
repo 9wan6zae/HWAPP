@@ -4,9 +4,7 @@ import { createAppContainer } from "react-navigation";
 import { createStackNavigator } from "react-navigation-stack";
 import { createBottomTabNavigator } from "react-navigation-tabs";
 
-import LoginScreen from "./LoginScreen";
-import HomeScreen from "./HomeScreen";
-import SomethingScreen from "./SomethingScreen"
+
 
 const HomeStack = createStackNavigator(
   {
