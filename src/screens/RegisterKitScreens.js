@@ -5,24 +5,30 @@ import {
     ScrollView,
     Button,
     Alert,
-    StyleSheet
+		StyleSheet,
+		TouchableOpacity
 } from 'react-native';
-import RegisterKit from '../RegisterKitScreens'
 
 
-export default class HomeScreen extends Component{
+export default class RegisterKitScreen extends Component{
     render(){
         return (
             <View style={styles.container}>
-                <View style={styles.headerView}/>
+                <View style={styles.headerView}>
+									<TouchableOpacity
+										
+										style={styles.backButtonStyle}
+									>
+										<Text onPress={() => this.props.navigation.goBack()}>
+											뒤로가기
+										</Text>
+									</TouchableOpacity>
+								</View>
                 <View style={styles.titleView}>
-                    <Text style={styles.titleStyle}>HWAPP</Text>
+                    <Text style={styles.titleStyle}>키트 등록하기</Text>
                 </View>
                 <View style={styles.contentView}>
-                    <Button
-                        title= "새로운 키트 등록"
-                        onPress={() => this.props.navigation.navigate(RegisterKit)}
-                    />
+                    
                 </View>
                 <View style={styles.footerView} />
             </View>
@@ -47,7 +53,7 @@ const styles = StyleSheet.create({
       },
       titleView: {
         width:'100%',
-        height:'15%',
+        height:'10%',
         justifyContent: 'center',
         alignItems: 'center',
         backgroundColor: '#9aa9ff',
@@ -66,7 +72,12 @@ const styles = StyleSheet.create({
         backgroundColor: '#1ad657',
       },
       titleStyle: {
-          fontSize: 70,
-          fontFamily: "NanumSquareRoundB"
-      }
+				fontSize: 50,
+				fontFamily: "NanumSquareRoundB"
+			},
+			backButtonStyle: {
+				position: 'absolute',
+				left: 10,
+				top: '50%'
+			}
 })
