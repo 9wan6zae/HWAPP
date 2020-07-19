@@ -24,8 +24,15 @@ import { createAppContainer } from 'react-navigation';
 import { createStackNavigator } from 'react-navigation-stack';
 import RegisterKitScreen from './src/screens/RegisterKitScreens';
 import CustomButton from './src/styles/CustomButton';
+import Table from './src/components/table';
+
+const dataSource = [
+  [["Row1 Column 1 Item0"], ["Row1 Column1 Item0 "]],
+  [["Row2 Column 1 Item0"], ["Row2 Column2 Item0", "Row2 Column2 Item1"]],
+]
 
 class HomeScreen extends Component {
+  
   render(){
     return (
         <View style={styles.container}>
@@ -40,7 +47,10 @@ class HomeScreen extends Component {
                   title={'키트 등록하기'}
                   onPress={() => this.props.navigation.navigate('RegisterKitScreen')}
                 />
+                
               </View>
+                <Table dataSource={dataSource}/>
+
             </View>
             <View style={styles.footerView} />
         </View>
