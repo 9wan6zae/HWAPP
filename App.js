@@ -24,7 +24,8 @@ import { createAppContainer } from 'react-navigation';
 import { createStackNavigator } from 'react-navigation-stack';
 import RegisterKitScreen from './src/screens/RegisterKitScreens';
 import CustomButton from './src/styles/CustomButton';
-import Table from './src/components/table';
+import KitTable from './src/components/table';
+import KitInfo from './src/screens/KitInfo'
 
 const dataSource = [
   [["Row1 Column 1 Item0"], ["Row1 Column1 Item0 "]],
@@ -49,7 +50,7 @@ class HomeScreen extends Component {
                 />
                 
               </View>
-                <Table dataSource={dataSource}/>
+                <KitTable dataSource={dataSource}/>
 
             </View>
             <View style={styles.footerView} />
@@ -62,7 +63,9 @@ class HomeScreen extends Component {
 const AppNavigator = createStackNavigator(
   {
     HomeScreen,
-    RegisterKitScreen
+    RegisterKitScreen,
+    KitInfo
+
   },
   {
     defaultNavigationOptions: () => ({
@@ -79,41 +82,42 @@ const styles = StyleSheet.create({
       flex: 1,
       justifyContent: 'center',
       //alignItems: 'center',
-      backgroundColor: 'black',
+      //backgroundColor: 'black',
     },
     headerView: {
       width:'100%',
       height:'9%',
       justifyContent: 'center',
       alignItems: 'center',
-      backgroundColor: '#ff9a9a',
+      //backgroundColor: '#ff9a9a',
     },
     titleView: {
       width:'100%',
       height:'10%',
       justifyContent: 'center',
       alignItems: 'center',
-      backgroundColor: '#9aa9ff',
+      //backgroundColor: '#9aa9ff',
     },
     contentView: {
       flex: 1,
       alignItems: 'center',
-      backgroundColor: '#d6ca1a',
+      //backgroundColor: '#d6ca1a',
       flexDirection: 'column',
     },
     registerView: {
-      height: '15%',
-      width: '98%',
+      marginTop: 20,
+      height: '12%',
+      width: '96%',
       justifyContent: 'center',
       alignItems: 'center',
-      backgroundColor: '#FF0000',
+      //backgroundColor: '#FF0000',
     },
     footerView: {
       width:'100%',
-      height:'20%',
+      height:'2%',
       justifyContent: 'center',
       alignItems: 'center',
-      backgroundColor: '#1ad657',
+      // backgroundColor: '#1ad657',
     },
     titleStyle: {
         fontSize: 70,
