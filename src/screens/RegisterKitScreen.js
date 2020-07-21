@@ -9,21 +9,24 @@ import {
   TouchableOpacity,
   TextInput,
 } from 'react-native';
+import CustomButton from '../styles/KitItem';
+import KitInfo from '../screens/KitInfo';
+
 import {createAppContainer} from 'react-navigation';
 import {createStackNavigator} from 'react-navigation-stack';
 
-
-export default class KitInfo extends Component {
+export default class RegisterKitScreen extends Component {
   render() {
+    var {navigate} = this.props.navigation;
     return (
       <View style={styles.container}>
         <View style={styles.headerView}>
-          <TouchableOpacity style={styles.backButtonStyle}>
+        <TouchableOpacity style={styles.backButtonStyle}>
             <Text onPress={() => this.props.navigation.goBack()}>뒤로가기</Text>
           </TouchableOpacity>
         </View>
         <View style={styles.titleView}>
-          <Text style={styles.titleStyle}>키트 정보</Text>
+          <Text style={styles.titleStyle}>키트 등록하기</Text>
         </View>
         <View style={styles.contentView}>
           <TextInput style={styles.textForm} placeholder={'시리얼 번호 입력'} />
@@ -36,14 +39,13 @@ export default class KitInfo extends Component {
 
 // const AppNavigator = createStackNavigator(
 //   {
-//     KitInfo,
 //     RegisterKitScreen,
 //   },
 //   {
 //     defaultNavigationOptions: () => ({
 //       headerShown: true,
 //     }),
-//     initialRouteName: 'KitInfo',
+//     initialRouteName: 'RegisterKitScreen',
 //   },
 // );
 // export default createAppContainer(AppNavigator);

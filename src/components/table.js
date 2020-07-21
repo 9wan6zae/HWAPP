@@ -1,14 +1,20 @@
 import React, {Component} from 'react';
 import {StyleSheet, View, ScrollView, Alert} from 'react-native';
 import {Table, TableWrapper, Row, Cell} from 'react-native-table-component';
-import CustomButton from '../styles/KitItem';
+import {StackNavigator} from 'react-navigation'
+import KitInfoButton from '../styles/KitItem';
+import KitInfo from '../screens/KitInfo'
+import RegisterKitScreen from '../screens/RegisterKitScreens';
+
+// const Navigation = StackNavigator({
+//   KitInfo:{screen: KitInfo},
+// });
 
 export default class KitTable extends Component {
   constructor(props) {
     super(props);
     this.state = {
       tableHead: ['키트 목록'],
-      widthArr: [400],
     };
   }
 
@@ -28,10 +34,10 @@ export default class KitTable extends Component {
     }
 
     const element = (data, index) => (
-      <CustomButton
+      <KitInfoButton
         buttonColor={'#3F3F3F'}
         title={'키트 '+(index+1)}
-        onPress={() => this._alertIndex(index)}
+        onPress={()=>this.props.navigation.go()}
       />
     );
 
