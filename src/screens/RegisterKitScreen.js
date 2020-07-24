@@ -1,5 +1,6 @@
 import React, {Component} from 'react';
 import {
+  SafeAreaView,
   View,
   Text,
   ScrollView,
@@ -19,20 +20,25 @@ export default class RegisterKitScreen extends Component {
   render() {
     var {navigate} = this.props.navigation;
     return (
-      <View style={styles.container}>
-        <View style={styles.headerView}>
-        <TouchableOpacity style={styles.backButtonStyle}>
-            <Text onPress={() => this.props.navigation.goBack()}>뒤로가기</Text>
-          </TouchableOpacity>
+        <View style={styles.container}>
+          <View style={styles.headerView}>
+            <TouchableOpacity style={styles.backButtonStyle}>
+              <Text onPress={() => this.props.navigation.goBack()}>
+                뒤로가기
+              </Text>
+            </TouchableOpacity>
+          </View>
+          <View style={styles.titleView}>
+            <Text style={styles.titleStyle}>키트 등록하기</Text>
+          </View>
+          <View style={styles.contentView}>
+            <TextInput
+              style={styles.textForm}
+              placeholder={'시리얼 번호 입력'}
+            />
+          </View>
+          <View style={styles.QRView} />
         </View>
-        <View style={styles.titleView}>
-          <Text style={styles.titleStyle}>키트 등록하기</Text>
-        </View>
-        <View style={styles.contentView}>
-          <TextInput style={styles.textForm} placeholder={'시리얼 번호 입력'} />
-        </View>
-        <View style={styles.QRView} />
-      </View>
     );
   }
 }
