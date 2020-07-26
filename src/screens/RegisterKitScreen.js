@@ -9,52 +9,44 @@ import {
   StyleSheet,
   TouchableOpacity,
   TextInput,
+  Linking,
+  AppRegistry,
 } from 'react-native';
-import CustomButton from '../styles/KitItem';
-import KitInfo from '../screens/KitInfo';
 
-import {createAppContainer} from 'react-navigation';
-import {createStackNavigator} from 'react-navigation-stack';
+import QRCodeScanner from 'react-native-qrcode-scanner';
+import {RNCamera} from 'react-native-camera';
 
 export default class RegisterKitScreen extends Component {
+  onSuccess = (e) => {
+    Linking.openURL(e.data).catch((err) =>
+      console.error('An error occured', err),
+    );
+  };
   render() {
-    var {navigate} = this.props.navigation;
     return (
-        <View style={styles.container}>
-          <View style={styles.headerView}>
-            <TouchableOpacity style={styles.backButtonStyle}>
-              <Text onPress={() => this.props.navigation.goBack()}>
-                뒤로가기
-              </Text>
-            </TouchableOpacity>
-          </View>
-          <View style={styles.titleView}>
-            <Text style={styles.titleStyle}>키트 등록하기</Text>
-          </View>
-          <View style={styles.contentView}>
-            <TextInput
-              style={styles.textForm}
-              placeholder={'시리얼 번호 입력'}
-            />
-          </View>
-          <View style={styles.QRView} />
+      <View style={styles.container}>
+        <View style={styles.headerView}>
+          <TouchableOpacity style={styles.backButtonStyle}>
+            <Text onPress={() => this.props.navigation.goBack()}>뒤로가기</Text>
+          </TouchableOpacity>
         </View>
+        <View style={styles.titleView}>
+          <Text style={styles.titleStyle}>키트 등록하기</Text>
+        </View>
+        <View style={styles.contentView}>
+          <TextInput style={styles.textForm} placeholder={'시리얼 번호 입력'} />
+        </View>
+        <View style={styles.QRView}>
+
+          <QRCodeScanner
+            onRead={this.onSuccess}
+            flashMode={RNCamera.Constants.FlashMode.None}
+          />
+        </View>
+      </View>
     );
   }
 }
-
-// const AppNavigator = createStackNavigator(
-//   {
-//     RegisterKitScreen,
-//   },
-//   {
-//     defaultNavigationOptions: () => ({
-//       headerShown: true,
-//     }),
-//     initialRouteName: 'RegisterKitScreen',
-//   },
-// );
-// export default createAppContainer(AppNavigator);
 
 const styles = StyleSheet.create({
   container: {
@@ -84,7 +76,7 @@ const styles = StyleSheet.create({
   },
   QRView: {
     width: '100%',
-    height: '33%',
+    height: '40%',
     justifyContent: 'center',
     alignItems: 'center',
     backgroundColor: '#1ad657',
@@ -99,3 +91,59 @@ const styles = StyleSheet.create({
     top: '50%',
   },
 });
+
+// import React, {Component} from 'react';
+
+// import {StyleSheet, Text, TouchableOpacity, Linking} from 'react-native';
+
+// import QRCodeScanner from 'react-native-qrcode-scanner';
+// import {RNCamera} from 'react-native-camera';
+
+// export default class ScanScreen extends Component {
+//   onSuccess = (e) => {
+//     Linking.openURL(e.data).catch((err) =>
+//       console.error('An error occured', err),
+//     );
+//   };
+
+//   render() {
+//     return (
+//       <QRCodeScanner
+//         onRead={this.onSuccess}
+//         flashMode={RNCamera.Constants.FlashMode.torch}
+//         topContent={
+//           <Text style={styles.centerText}>
+//             Go to{' '}
+//             <Text style={styles.textBold}>wikipedia.org/wiki/QR_code</Text> on
+//             your computer and scan the QR code.
+//           </Text>
+//         }
+//         bottomContent={
+//           <TouchableOpacity style={styles.buttonTouchable}>
+//             <Text style={styles.buttonText}>OK. Got it!</Text>
+//           </TouchableOpacity>
+//         }
+//       />
+//     );
+//   }
+// }
+
+// const styles = StyleSheet.create({
+//   centerText: {
+//     flex: 1,
+//     fontSize: 18,
+//     padding: 32,
+//     color: '#777',
+//   },
+//   textBold: {
+//     fontWeight: '500',
+//     color: '#000',
+//   },
+//   buttonText: {
+//     fontSize: 21,
+//     color: 'rgb(0,122,255)',
+//   },
+//   buttonTouchable: {
+//     padding: 16,
+//   },
+// });
