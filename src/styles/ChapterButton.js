@@ -29,12 +29,13 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'center',
     backgroundColor: 'red',
-    width: '100%',
-    height: 60,
+    width: 144,
+    height: 144,
+    borderRadius: 20,
   },
   title: {
-    fontSize: 30,
-    color: '#FFF',
+    fontSize: 25,
+    color: '#000',
     fontFamily: 'NanumSquareRoundB',
   },
 });

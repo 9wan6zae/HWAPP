@@ -11,17 +11,14 @@
 
 import React, {Component} from 'react';
 import {
-  SafeAreaView,
   View,
   Text,
   ScrollView,
-  Button,
-  Alert,
   StyleSheet,
-  TouchableOpacity,
-  StatusBar
+  StatusBar,
+  Platform,
 } from 'react-native';
-import {Table, TableWrapper, Row, Cell} from 'react-native-table-component';
+import {Table} from 'react-native-table-component';
 import {createAppContainer} from 'react-navigation';
 import {createStackNavigator} from 'react-navigation-stack';
 
@@ -30,6 +27,8 @@ import KitInfoButton from './src/styles/KitItem';
 
 import KitInfo from './src/screens/KitInfo';
 import RegisterKitScreen from './src/screens/RegisterKitScreen';
+
+const STATUSBAR_HEIGHT = Platform.OS === 'ios' ? 20 : StatusBar.currentHeight;
 
 const dataSource = [
   [['Row1 Column 1 Item0'], ['Row1 Column1 Item0 ']],
@@ -50,40 +49,42 @@ class HomeScreen extends Component {
     }
 
     return (
-      
-        <View style={styles.container}>
-          <View style={styles.headerView} />
-          <View style={styles.titleView}>
-            <Text style={styles.titleStyle}>HWAPP</Text>
-          </View>
-          <View style={styles.contentView}>
-            <View style={styles.registerView}>
-              <CustomButton
-                buttonColor={'#023e71'}
-                title={'키트 등록하기'}
-                onPress={() => navigate('RegisterKitScreen')}
-              />
-            </View>
-            <View style={styles.tableContainer}>
-              <View>
-                <ScrollView style={styles.dataWrapper}>
-                  <Table borderStyle={{borderWidth: 1, borderColor: '#C1C0B9'}}>
-                    {tableData.map((rowData, index) =>
-                      rowData.map((cellData, cellIndex) => (
-                        <KitInfoButton
-                          buttonColor={'#3F3F3F'}
-                          title={'키트 ' + (index + 1)}
-                          onPress={() => navigate('KitInfo')}
-                        />
-                      )),
-                    )}
-                  </Table>
-                </ScrollView>
-              </View>
-            </View>
-          </View>
-          <View style={styles.footerView} />
+      <View style={styles.container}>
+        <View style={styles.statusBar}>
+          <StatusBar backgroundColor="#fff" barStyle="dark-content" ax />
         </View>
+        <View style={styles.headerView} />
+        <View style={styles.titleView}>
+          <Text style={styles.titleStyle}>HWAPP</Text>
+        </View>
+        <View style={styles.contentView}>
+          <View style={styles.registerView}>
+            <CustomButton
+              buttonColor={'#023e71'}
+              title={'키트 등록하기'}
+              onPress={() => navigate('RegisterKitScreen')}
+            />
+          </View>
+          <View style={styles.tableContainer}>
+            <View>
+              <ScrollView style={styles.dataWrapper}>
+                <Table borderStyle={{borderWidth: 1, borderColor: '#C1C0B9'}}>
+                  {tableData.map((rowData, index) =>
+                    rowData.map((cellData, cellIndex) => (
+                      <KitInfoButton
+                        buttonColor={'#3F3F3F'}
+                        title={'키트 ' + (index + 1)}
+                        onPress={() => navigate('KitInfo')}
+                      />
+                    )),
+                  )}
+                </Table>
+              </ScrollView>
+            </View>
+          </View>
+        </View>
+        <View style={styles.footerView} />
+      </View>
     );
   }
 }
@@ -108,6 +109,9 @@ const AppNavigator = createStackNavigator(
 export default createAppContainer(AppNavigator);
 
 const styles = StyleSheet.create({
+  statusBar: {
+    height: STATUSBAR_HEIGHT,
+  },
   container: {
     flex: 1,
     justifyContent: 'center',

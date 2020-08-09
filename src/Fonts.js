@@ -1,3 +1,3 @@
 export const Fonts = {
-	BMDOHYEON: "BMDOHYEON"
+  BMDOHYEON: 'BMDOHYEON',
 };

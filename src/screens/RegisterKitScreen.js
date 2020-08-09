@@ -1,22 +1,13 @@
 import React, {Component} from 'react';
-import {
-  SafeAreaView,
-  View,
-  Text,
-  ScrollView,
-  Button,
-  Alert,
-  StyleSheet,
-  TouchableOpacity,
-  TextInput,
-  Linking,
-  AppRegistry,
-} from 'react-native';
+import {View, Text, StyleSheet, TextInput, Linking} from 'react-native';
 
 import QRCodeScanner from 'react-native-qrcode-scanner';
 import {RNCamera} from 'react-native-camera';
 
-export default class RegisterKitScreen extends Component {
+import {createAppContainer} from 'react-navigation';
+import {createStackNavigator} from 'react-navigation-stack';
+
+class RegisterKitScreen extends Component {
   onSuccess = (e) => {
     Linking.openURL(e.data).catch((err) =>
       console.error('An error occured', err),
@@ -25,11 +16,11 @@ export default class RegisterKitScreen extends Component {
   render() {
     return (
       <View style={styles.container}>
-        <View style={styles.headerView}>
+        {/* <View style={styles.headerView}>
           <TouchableOpacity style={styles.backButtonStyle}>
             <Text onPress={() => this.props.navigation.goBack()}>뒤로가기</Text>
           </TouchableOpacity>
-        </View>
+        </View> */}
         <View style={styles.titleView}>
           <Text style={styles.titleStyle}>키트 등록하기</Text>
         </View>
@@ -37,7 +28,6 @@ export default class RegisterKitScreen extends Component {
           <TextInput style={styles.textForm} placeholder={'시리얼 번호 입력'} />
         </View>
         <View style={styles.QRView}>
-
           <QRCodeScanner
             onRead={this.onSuccess}
             flashMode={RNCamera.Constants.FlashMode.None}
@@ -47,6 +37,23 @@ export default class RegisterKitScreen extends Component {
     );
   }
 }
+
+const AppNavigator = createStackNavigator(
+  {
+    RegisterKitScreen,
+  },
+  {
+    defaultNavigationOptions: () => ({
+      headerShown: true,
+      headerTintColor: '#000',
+      headerStyle: {
+        backgroundColor: '#FFF',
+      },
+    }),
+    initialRouteName: 'RegisterKitScreen',
+  },
+);
+export default createAppContainer(AppNavigator);
 
 const styles = StyleSheet.create({
   container: {
