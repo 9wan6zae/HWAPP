@@ -1,14 +1,3 @@
-// import React from 'react';
-// import AppStack from './src/screens';
-
-// const App = () => {
-//   return (
-//     <AppStack />
-//   );
-// };
-
-// export default App;
-
 import React, {Component} from 'react';
 import {
   View,
@@ -29,11 +18,6 @@ import KitInfo from './src/screens/KitInfo';
 import RegisterKitScreen from './src/screens/RegisterKitScreen';
 
 const STATUSBAR_HEIGHT = Platform.OS === 'ios' ? 20 : StatusBar.currentHeight;
-
-const dataSource = [
-  [['Row1 Column 1 Item0'], ['Row1 Column1 Item0 ']],
-  [['Row2 Column 1 Item0'], ['Row2 Column2 Item0', 'Row2 Column2 Item1']],
-];
 
 class HomeScreen extends Component {
   render() {
@@ -68,7 +52,7 @@ class HomeScreen extends Component {
           <View style={styles.tableContainer}>
             <View>
               <ScrollView style={styles.dataWrapper}>
-                <Table borderStyle={{borderWidth: 1, borderColor: '#C1C0B9'}}>
+                <Table borderStyle={styles.borderStyle}>
                   {tableData.map((rowData, index) =>
                     rowData.map((cellData, cellIndex) => (
                       <KitInfoButton
@@ -102,6 +86,7 @@ const AppNavigator = createStackNavigator(
       headerStyle: {
         backgroundColor: '#FFF',
       },
+      headerBackTitle: ' ',
     }),
     initialRouteName: 'HomeScreen',
   },
@@ -161,4 +146,8 @@ const styles = StyleSheet.create({
   text: {textAlign: 'center', fontWeight: '100'},
   dataWrapper: {marginTop: -1},
   row: {height: 40, backgroundColor: '#E7E6E1'},
+  borderStyle: {
+    borderWidth: 1,
+    borderColor: '#C1C0B9',
+  },
 });

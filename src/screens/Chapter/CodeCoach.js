@@ -9,6 +9,9 @@ import {
 import RBSheet from 'react-native-raw-bottom-sheet';
 
 export default class KitInfo extends Component {
+  static navigationOptions = {
+    title: '코드설명',
+  };
   render() {
     return (
       <View style={styles.container}>

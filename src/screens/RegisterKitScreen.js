@@ -1,5 +1,5 @@
 import React, {Component} from 'react';
-import {View, Text, StyleSheet, TextInput, Linking} from 'react-native';
+import {View, StyleSheet, TextInput, Linking} from 'react-native';
 
 import QRCodeScanner from 'react-native-qrcode-scanner';
 import {RNCamera} from 'react-native-camera';
@@ -8,6 +8,9 @@ import {createAppContainer} from 'react-navigation';
 import {createStackNavigator} from 'react-navigation-stack';
 
 class RegisterKitScreen extends Component {
+  static navigationOptions = {
+    title: '키트 등록하기',
+  };
   onSuccess = (e) => {
     Linking.openURL(e.data).catch((err) =>
       console.error('An error occured', err),
@@ -21,9 +24,9 @@ class RegisterKitScreen extends Component {
             <Text onPress={() => this.props.navigation.goBack()}>뒤로가기</Text>
           </TouchableOpacity>
         </View> */}
-        <View style={styles.titleView}>
+        {/* <View style={styles.titleView}>
           <Text style={styles.titleStyle}>키트 등록하기</Text>
-        </View>
+        </View> */}
         <View style={styles.contentView}>
           <TextInput style={styles.textForm} placeholder={'시리얼 번호 입력'} />
         </View>
@@ -49,6 +52,7 @@ const AppNavigator = createStackNavigator(
       headerStyle: {
         backgroundColor: '#FFF',
       },
+      headerBackTitle: ' ',
     }),
     initialRouteName: 'RegisterKitScreen',
   },
@@ -73,20 +77,20 @@ const styles = StyleSheet.create({
     height: '10%',
     justifyContent: 'center',
     alignItems: 'center',
-    backgroundColor: '#9aa9ff',
+    backgroundColor: '#FFF',
   },
   contentView: {
     flex: 1,
     justifyContent: 'center',
     alignItems: 'center',
-    backgroundColor: '#d6ca1a',
+    backgroundColor: '#FFF',
   },
   QRView: {
     width: '100%',
     height: '40%',
     justifyContent: 'center',
     alignItems: 'center',
-    backgroundColor: '#1ad657',
+    backgroundColor: '#FFF',
   },
   titleStyle: {
     fontSize: 50,

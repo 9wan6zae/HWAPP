@@ -17,7 +17,8 @@ export default class CustomButton extends Component {
     return (
       <TouchableOpacity
         style={[styles.button, {backgroundColor: this.props.buttonColor}]}
-        onPress={this.props.onPress}>
+        onPress={this.props.onPress}
+        disabled={this.props.disabled}>
         <Text style={[styles.title]}>{this.props.title}</Text>
       </TouchableOpacity>
     );

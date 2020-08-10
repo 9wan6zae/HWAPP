@@ -22,6 +22,10 @@ target 'HWAPP' do
 
   pod 'RNPermissions', :path => '../node_modules/react-native-permissions'
 
+  pod 'react-native-video', :path => '../node_modules/react-native-video'
+
+  pod 'XCDYouTubeKit', '~> 2.8'
+
   target 'HWAPPTests' do
     inherit! :complete
     # Pods for testing

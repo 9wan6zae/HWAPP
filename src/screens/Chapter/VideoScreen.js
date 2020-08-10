@@ -1,19 +1,27 @@
 import React, {Component} from 'react';
-import {View, Text, StyleSheet} from 'react-native';
+import {View, StyleSheet} from 'react-native';
+import YouTube from 'react-native-youtube';
 
 export default class KitInfo extends Component {
+  static navigationOptions = {
+    title: '조립 영상',
+  };
   render() {
     return (
       <View style={styles.container}>
-        {/* <View style={styles.headerView}>
-          <TouchableOpacity style={styles.backButtonStyle}>
-            <Text onPress={() => this.props.navigation.goBack()}>뒤로가기</Text>
-          </TouchableOpacity>
-        </View> */}
-        <View style={styles.titleView}>
-          <Text style={styles.titleStyle}>조립영상</Text>
+        <View style={styles.contentView}>
+          <YouTube
+            videoId="gQHD0vSYW9g" // The YouTube video ID
+            play // control playback of video with true/false
+            fullscreen // control whether the video should play in fullscreen or inline
+            loop // control whether the video should loop when ended
+            onReady={(e) => this.setState({isReady: true})}
+            onChangeState={(e) => this.setState({status: e.state})}
+            onChangeQuality={(e) => this.setState({quality: e.quality})}
+            onError={(e) => this.setState({error: e.error})}
+            style={styles.videoStyle}
+          />
         </View>
-        <View style={styles.contentView} />
         <View style={styles.footerView} />
       </View>
     );
@@ -21,6 +29,17 @@ export default class KitInfo extends Component {
 }
 
 const styles = StyleSheet.create({
+  videoStyle: {
+    alignSelf: 'stretch',
+    height: 300,
+  },
+  backgroundVideo: {
+    position: 'absolute',
+    top: 0,
+    left: 0,
+    bottom: 0,
+    right: 0,
+  },
   container: {
     flex: 1,
     justifyContent: 'center',
@@ -46,14 +65,14 @@ const styles = StyleSheet.create({
     flexDirection: 'column',
     justifyContent: 'center',
     alignItems: 'center',
-    backgroundColor: '#d6ca1a',
+    backgroundColor: '#FFF',
   },
   footerView: {
     width: '100%',
     height: '10%',
     justifyContent: 'center',
     alignItems: 'center',
-    backgroundColor: '#1ad657',
+    backgroundColor: '#FFF',
   },
   titleStyle: {
     fontSize: 50,

@@ -2,6 +2,9 @@ import React, {Component} from 'react';
 import {View, Text, StyleSheet} from 'react-native';
 
 export default class KitInfo extends Component {
+  static navigationOptions = {
+    title: '퀴즈',
+  };
   render() {
     return (
       <View style={styles.container}>
@@ -10,9 +13,9 @@ export default class KitInfo extends Component {
             <Text onPress={() => this.props.navigation.goBack()}>뒤로가기</Text>
           </TouchableOpacity>
         </View> */}
-        <View style={styles.titleView}>
+        {/* <View style={styles.titleView}>
           <Text style={styles.titleStyle}>퀴즈</Text>
-        </View>
+        </View> */}
         <View style={styles.contentView} />
         <View style={styles.footerView} />
       </View>
