@@ -14,7 +14,7 @@ class KitInfo extends Component {
     title: '키트 정보',
   };
   render() {
-    var chapterStep = 2;
+    var chapterStep = 3;
     var {navigate} = this.props.navigation;
     return (
       <View style={styles.container}>
