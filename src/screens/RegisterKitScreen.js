@@ -12,9 +12,10 @@ class RegisterKitScreen extends Component {
     title: '키트 등록하기',
   };
   onSuccess = (e) => {
-    Linking.openURL(e.data).catch((err) =>
-      console.error('An error occured', err),
-    );
+    // Linking.openURL(e.data).catch((err) =>
+    //   console.error('An error occured', err),
+    // );
+    console.log(e);
   };
   render() {
     return (
