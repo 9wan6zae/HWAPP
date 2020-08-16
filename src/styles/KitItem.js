@@ -31,6 +31,7 @@ const styles = StyleSheet.create({
     backgroundColor: 'red',
     width: '100%',
     height: 60,
+    marginBottom: 5,
   },
   title: {
     fontSize: 30,
