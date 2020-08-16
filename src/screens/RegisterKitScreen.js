@@ -1,5 +1,13 @@
 import React, {Component} from 'react';
-import {View, StyleSheet, TextInput, Linking} from 'react-native';
+import {
+  View,
+  Text,
+  StyleSheet,
+  Button,
+  TextInput,
+  Linking,
+  Alert,
+} from 'react-native';
 
 import QRCodeScanner from 'react-native-qrcode-scanner';
 import {RNCamera} from 'react-native-camera';
@@ -8,14 +16,23 @@ import {createAppContainer} from 'react-navigation';
 import {createStackNavigator} from 'react-navigation-stack';
 
 class RegisterKitScreen extends Component {
+  state = {
+    message: 'test',
+    serialNumber: '',
+  };
+
+  handleText = (text) => {
+    this.setState({serialNumber: text});
+  };
+
   static navigationOptions = {
     title: '키트 등록하기',
   };
   onSuccess = (e) => {
-    // Linking.openURL(e.data).catch((err) =>
-    //   console.error('An error occured', err),
-    // );
-    console.log(e);
+    this.state.message = e.data;
+    Linking.openURL(e.data).catch((err) =>
+      console.error('An error occured', err),
+    );
   };
   render() {
     return (
@@ -29,7 +46,16 @@ class RegisterKitScreen extends Component {
           <Text style={styles.titleStyle}>키트 등록하기</Text>
         </View> */}
         <View style={styles.contentView}>
-          <TextInput style={styles.textForm} placeholder={'시리얼 번호 입력'} />
+          <TextInput
+            style={styles.textForm}
+            placeholder={'시리얼 번호 입력'}
+            onChangeText={this.handleText}
+          />
+          <Button
+            title="test"
+            onPress={() => Alert.alert(this.state.serialNumber)}
+          />
+          <Text>{this.state.message}</Text>
         </View>
         <View style={styles.QRView}>
           <QRCodeScanner
