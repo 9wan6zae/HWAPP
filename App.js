@@ -29,11 +29,24 @@ class HomeScreen extends Component {
 
   loadKitInfo = async () => {
     axios
-      .get('https://hwapp-2020.herokuapp.com/kit/getKitinfo?userId=faker')
+      .get('https://hwapp-2020.herokuapp.com/kit/getKitinfo?userId=bang')
       .then((response) => this.setState({kitInfo: response.data}));
   };
 
+  constructor(props) {
+    super(props);
+    console.log('ccc');
+  }
+
+  componentWillMount() {
+    this._subscribe = this.props.navigation.addListener('didFocus', () => {
+      this.loadKitInfo();
+      //Put your Data loading function here instead of my this.LoadData()
+    });
+  }
+
   componentDidMount() {
+    console.log('mounted');
     this.loadKitInfo();
   }
 
