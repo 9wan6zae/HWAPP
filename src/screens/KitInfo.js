@@ -14,7 +14,7 @@ class KitInfo extends Component {
     title: '키트 정보',
   };
   render() {
-    var chapterStep = 3;
+    var chapterStep = 1;
     var {navigate} = this.props.navigation;
     return (
       <View style={styles.container}>
@@ -29,13 +29,13 @@ class KitInfo extends Component {
         <View style={styles.contentView}>
           <View style={styles.ChapterButtonStyle}>
             <ChapterButton
-              buttonColor={'#3AE5D1'}
+              buttonColor={chapterStep < 1 ? '#DBDBDB' : '#3AE5D1'}
               title={'조립영상'}
               onPress={() => navigate('VideoScreen')}
               disabled={chapterStep < 1}
             />
             <ChapterButton
-              buttonColor={'#3AE5D1'}
+              buttonColor={chapterStep < 2 ? '#DBDBDB' : '#3AE5D1'}
               title={'코드설명'}
               onPress={() => navigate('CodeCoach')}
               disabled={chapterStep < 2}
@@ -43,13 +43,13 @@ class KitInfo extends Component {
           </View>
           <View style={styles.ChapterButtonStyle}>
             <ChapterButton
-              buttonColor={'#3AE5D1'}
+              buttonColor={chapterStep < 3 ? '#DBDBDB' : '#3AE5D1'}
               title={'커스터마이징'}
               onPress={() => navigate('CustomCode')}
               disabled={chapterStep < 3}
             />
             <ChapterButton
-              buttonColor={'#3AE5D1'}
+              buttonColor={chapterStep < 4 ? '#DBDBDB' : '#3AE5D1'}
               title={'퀴즈'}
               onPress={() => navigate('Quiz')}
               disabled={chapterStep < 4}

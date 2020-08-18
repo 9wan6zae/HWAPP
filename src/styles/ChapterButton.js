@@ -36,7 +36,7 @@ const styles = StyleSheet.create({
   },
   title: {
     fontSize: 25,
-    color: '#000',
+    color: '#FFF',
     fontFamily: 'NanumSquareRoundB',
   },
 });

@@ -6,6 +6,7 @@ import {
   StyleSheet,
   StatusBar,
   Platform,
+  Button,
 } from 'react-native';
 
 import axios from 'axios';
@@ -38,17 +39,26 @@ class HomeScreen extends Component {
     console.log('ccc');
   }
 
-  componentWillMount() {
+  componentDidMount() {
     this._subscribe = this.props.navigation.addListener('didFocus', () => {
       this.loadKitInfo();
       //Put your Data loading function here instead of my this.LoadData()
     });
   }
 
-  componentDidMount() {
-    console.log('mounted');
+  deleteInfo() {
+    axios
+      .delete('https://hwapp-2020.herokuapp.com/kit/deleteUserKitInfo')
+      .then((response) => console.log(response))
+      .catch((error) => console.log(error));
+
     this.loadKitInfo();
   }
+
+  // componentDidMount() {
+  //   console.log('mounted');
+  //   this.loadKitInfo();
+  // }
 
   render() {
     const {kitInfo} = this.state;
@@ -72,6 +82,7 @@ class HomeScreen extends Component {
         <View style={styles.headerView} />
         <View style={styles.titleView}>
           <Text style={styles.titleStyle}>HWAPP</Text>
+          <Button title="delete" onPress={() => this.deleteInfo()} />
         </View>
         <View style={styles.contentView}>
           <View style={styles.registerView}>
