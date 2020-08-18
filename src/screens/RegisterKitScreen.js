@@ -1,21 +1,15 @@
 import React, {Component} from 'react';
-import {
-  View,
-  Text,
-  StyleSheet,
-  Button,
-  TextInput,
-  Linking,
-  Alert,
-} from 'react-native';
+import {View, Text, StyleSheet, Button, TextInput, Linking} from 'react-native';
+
+import axios from 'axios';
 
 import QRCodeScanner from 'react-native-qrcode-scanner';
 import {RNCamera} from 'react-native-camera';
 
-import {createAppContainer} from 'react-navigation';
-import {createStackNavigator} from 'react-navigation-stack';
+// import {createAppContainer} from 'react-navigation';
+// import {createStackNavigator} from 'react-navigation-stack';
 
-class RegisterKitScreen extends Component {
+export default class RegisterKitScreen extends Component {
   state = {
     message: 'test',
     serialNumber: '',
@@ -23,6 +17,25 @@ class RegisterKitScreen extends Component {
 
   handleText = (text) => {
     this.setState({serialNumber: text});
+  };
+
+  goBack() {
+    this.props.navigation.goBack();
+  }
+
+  registerKitbySerialNumber = () => {
+    axios
+      .post('https://hwapp-2020.herokuapp.com/kit/registUserKit', {
+        userId: 'bang',
+        kitCode: this.state.serialNumber,
+      })
+      .then(function (response) {
+        console.log(response);
+      })
+      .catch(function (error) {
+        console.log(error);
+      });
+    this.goBack();
   };
 
   static navigationOptions = {
@@ -53,9 +66,9 @@ class RegisterKitScreen extends Component {
           />
           <Button
             title="test"
-            onPress={() => Alert.alert(this.state.serialNumber)}
+            onPress={() => this.registerKitbySerialNumber()}
           />
-          <Text>{this.state.message}</Text>
+          <Text>{this.state.serialNumber}</Text>
         </View>
         <View style={styles.QRView}>
           <QRCodeScanner
@@ -68,23 +81,24 @@ class RegisterKitScreen extends Component {
   }
 }
 
-const AppNavigator = createStackNavigator(
-  {
-    RegisterKitScreen,
-  },
-  {
-    defaultNavigationOptions: () => ({
-      headerShown: true,
-      headerTintColor: '#000',
-      headerStyle: {
-        backgroundColor: '#FFF',
-      },
-      headerBackTitle: ' ',
-    }),
-    initialRouteName: 'RegisterKitScreen',
-  },
-);
-export default createAppContainer(AppNavigator);
+// const AppNavigator = createStackNavigator(
+//   {
+//     RegisterKitScreen,
+//     TMP,
+//   },
+//   {
+//     defaultNavigationOptions: () => ({
+//       headerShown: true,
+//       headerTintColor: '#000',
+//       headerStyle: {
+//         backgroundColor: '#FFF',
+//       },
+//       headerBackTitle: ' ',
+//     }),
+//     initialRouteName: 'RegisterKitScreen',
+//   },
+// );
+// export default createAppContainer(AppNavigator);
 
 const styles = StyleSheet.create({
   container: {
