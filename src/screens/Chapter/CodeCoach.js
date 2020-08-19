@@ -213,7 +213,7 @@ const styles = StyleSheet.create({
     height: '5%',
     justifyContent: 'center',
     alignItems: 'center',
-    backgroundColor: '#9aa9ff',
+    backgroundColor: 'white',
   },
   contentView: {
     flex: 1,
@@ -221,14 +221,14 @@ const styles = StyleSheet.create({
     flexDirection: 'column',
     justifyContent: 'center',
     alignItems: 'center',
-    backgroundColor: '#d6ca1a',
+    backgroundColor: 'white',
   },
   footerView: {
     width: '100%',
     height: '10%',
     justifyContent: 'center',
     alignItems: 'center',
-    backgroundColor: '#1ad657',
+    backgroundColor: 'white',
   },
   titleStyle: {
     fontSize: 50,

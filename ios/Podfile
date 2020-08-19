@@ -14,7 +14,7 @@ target 'HWAPP' do
 
   pod 'RNGestureHandler', :path => '../node_modules/react-native-gesture-handler'
 
-  pod 'RNScreens', :path => '../node_modules/ react-native-screens'
+  pod 'RNScreens', :path => '../node_modules/react-native-screens'
 
   pod 'react-native-safe-area-context', :path => '../node_modules/react-native-safe-area-context'
 
@@ -25,6 +25,8 @@ target 'HWAPP' do
   pod 'react-native-video', :path => '../node_modules/react-native-video'
 
   pod 'XCDYouTubeKit', '~> 2.8'
+
+  pod 'react-native-ble-plx', :path => '../node_modules/react-native-ble-plx'
 
   target 'HWAPPTests' do
     inherit! :complete

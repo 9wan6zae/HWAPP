@@ -19,6 +19,8 @@
     "axios": "^0.19.2",
     "react": "16.13.1",
     "react-native": "^0.63.2",
+    "react-native-ble-plx": "^2.0.1",
+    "react-native-bluetooth-classic": "^0.10.9",
     "react-native-bluetooth-serial-next": "github:michalkow/react-native-bluetooth-serial-next#master",
     "react-native-camera": "^3.35.0",
     "react-native-gesture-handler": "^1.6.1",
@@ -38,6 +40,7 @@
     "react-navigation": "^4.4.0",
     "react-navigation-stack": "^2.8.2",
     "react-navigation-tabs": "^2.9.0",
+    "react-redux": "^7.2.1",
     "reanimated-bottom-sheet": "^1.0.0-alpha.20"
   },
   "devDependencies": {

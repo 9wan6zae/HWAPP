@@ -71,10 +71,10 @@ export default class RegisterKitScreen extends Component {
           <Text>{this.state.serialNumber}</Text>
         </View>
         <View style={styles.QRView}>
-          <QRCodeScanner
+          {/* <QRCodeScanner
             onRead={this.onSuccess}
             flashMode={RNCamera.Constants.FlashMode.None}
-          />
+          /> */}
         </View>
       </View>
     );
