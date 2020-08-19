@@ -9,48 +9,28 @@
     "test": "jest",
     "lint": "eslint ."
   },
-  "rnpm": {
-    "assets": [
-      "./assets/fonts/"
-    ]
-  },
   "dependencies": {
     "@react-native-community/masked-view": "^0.1.10",
     "axios": "^0.19.2",
     "react": "16.13.1",
-    "react-native": "^0.63.2",
-    "react-native-ble-plx": "^2.0.1",
-    "react-native-bluetooth-classic": "^0.10.9",
-    "react-native-bluetooth-serial-next": "github:michalkow/react-native-bluetooth-serial-next#master",
-    "react-native-camera": "^3.35.0",
-    "react-native-gesture-handler": "^1.6.1",
-    "react-native-permissions": "^2.1.5",
-    "react-native-qrcode-scanner": "^1.4.1",
+    "react-native": "0.63.2",
+    "react-native-gesture-handler": "^1.7.0",
     "react-native-raw-bottom-sheet": "^2.2.0",
-    "react-native-reanimated": "^1.9.0",
-    "react-native-responsive-screen": "^1.4.1",
-    "react-native-router-flux": "^4.2.0",
-    "react-native-safe-area-context": "^3.1.1",
-    "react-native-screens": "^2.9.0",
-    "react-native-stack": "^1.0.0-alpha11",
+    "react-native-safe-area-context": "^3.1.4",
+    "react-native-screens": "^2.10.1",
     "react-native-table-component": "^1.2.1",
-    "react-native-toast": "^1.0.1",
-    "react-native-video": "^4.4.5",
     "react-native-youtube": "^2.0.1",
     "react-navigation": "^4.4.0",
-    "react-navigation-stack": "^2.8.2",
-    "react-navigation-tabs": "^2.9.0",
-    "react-redux": "^7.2.1",
-    "reanimated-bottom-sheet": "^1.0.0-alpha.20"
+    "react-navigation-stack": "^2.8.2"
   },
   "devDependencies": {
-    "@babel/core": "^7.10.5",
-    "@babel/runtime": "^7.10.5",
+    "@babel/core": "^7.11.1",
+    "@babel/runtime": "^7.11.2",
     "@react-native-community/eslint-config": "^2.0.0",
-    "babel-jest": "^26.1.0",
-    "eslint": "^7.4.0",
-    "jest": "^26.1.0",
-    "metro-react-native-babel-preset": "^0.60.0",
+    "babel-jest": "^26.3.0",
+    "eslint": "^7.7.0",
+    "jest": "^26.4.0",
+    "metro-react-native-babel-preset": "^0.62.0",
     "react-test-renderer": "16.13.1"
   },
   "jest": {

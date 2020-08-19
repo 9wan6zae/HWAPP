@@ -25,7 +25,7 @@ export default class LoginScreen extends Component {
     return (
       <View style={styles.container}>
         <View style={styles.titleArea}>
-          <Text style={styles.title}>HWAPP</Text>
+          <Text style={styles.title}>HWAPP2</Text>
         </View>
         <View style={styles.formArea}>
           <TextInput style={styles.textForm} placeholder={'ID'} />

@@ -3,9 +3,6 @@ import {View, Text, StyleSheet, Button, TextInput, Linking} from 'react-native';
 
 import axios from 'axios';
 
-import QRCodeScanner from 'react-native-qrcode-scanner';
-import {RNCamera} from 'react-native-camera';
-
 // import {createAppContainer} from 'react-navigation';
 // import {createStackNavigator} from 'react-navigation-stack';
 
@@ -135,7 +132,7 @@ const styles = StyleSheet.create({
   },
   titleStyle: {
     fontSize: 50,
-    fontFamily: 'NanumSquareRoundB',
+    //fontFamily: 'NanumSquareRoundB',
   },
   backButtonStyle: {
     position: 'absolute',

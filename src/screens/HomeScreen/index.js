@@ -16,7 +16,7 @@ export default class HomeScreen extends Component{
             <View style={styles.container}>
                 <View style={styles.headerView}/>
                 <View style={styles.titleView}>
-                    <Text style={styles.titleStyle}>HWAPP</Text>
+                    <Text style={styles.titleStyle}>HWAPP2</Text>
                 </View>
                 <View style={styles.contentView}>
                     <Button
@@ -67,6 +67,6 @@ const styles = StyleSheet.create({
       },
       titleStyle: {
           fontSize: 70,
-          fontFamily: "NanumSquareRoundB"
+          //fontFamily: "NanumSquareRoundB"
       }
 })

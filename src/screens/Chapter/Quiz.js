@@ -60,7 +60,7 @@ const styles = StyleSheet.create({
   },
   titleStyle: {
     fontSize: 50,
-    fontFamily: 'NanumSquareRoundB',
+    //fontFamily: 'NanumSquareRoundB',
   },
   backButtonStyle: {
     position: 'absolute',

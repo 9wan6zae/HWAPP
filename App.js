@@ -185,7 +185,7 @@ const styles = StyleSheet.create({
   },
   titleStyle: {
     fontSize: 70,
-    fontFamily: 'NanumSquareRoundB',
+    // fontFamily: 'NanumSquareRoundB',
   },
   tableContainer: {width: '100%', flex: 1, padding: 10, paddingTop: 30},
   header: {height: 50, backgroundColor: '#537791'},
