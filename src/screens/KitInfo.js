@@ -3,6 +3,7 @@ import {View, StyleSheet} from 'react-native';
 import ChapterButton from '../styles/ChapterButton';
 import {createAppContainer} from 'react-navigation';
 import {createStackNavigator} from 'react-navigation-stack';
+import Axios from 'axios';
 
 import VideoScreen from './Chapter/VideoScreen';
 import CodeCoach from './Chapter/CodeCoach';
@@ -13,31 +14,54 @@ class KitInfo extends Component {
   static navigationOptions = {
     title: '키트 정보',
   };
+
+  state = {
+    chapterStep: '',
+    kitCode: '',
+  };
+
+  loadChapterStep = async () => {
+    const index = this.props.navigation.state.params.index;
+    const kitCode = this.props.navigation.state.params.kitInfo[index].kitCode;
+    this.setState({kitCode: kitCode});
+    console.log(kitCode);
+    Axios.get(
+      'https://hwapp-2020.herokuapp.com/kit/getChapterStep?userId=bang&kitCode=' +
+        kitCode,
+    )
+      .then((response) =>
+        this.setState({chapterStep: response.data.chapterStep}),
+      )
+      .then(() => console.log(this.state.chapterStep));
+  };
+
+  componentDidMount() {
+    this._subscribe = this.props.navigation.addListener('didFocus', () => {
+      this.loadChapterStep();
+      //Put your Data loading function here instead of my this.LoadData()
+    });
+  }
+
   render() {
-    var chapterStep = 4;
     var {navigate} = this.props.navigation;
+
+    var {chapterStep} = this.state;
+    const {kitCode} = this.state;
+
     return (
       <View style={styles.container}>
-        {/* <View style={styles.headerView}>
-          <TouchableOpacity style={styles.backButtonStyle}>
-            <Text onPress={() => this.props.navigation.goBack()}>뒤로가기</Text>
-          </TouchableOpacity>
-        </View> */}
-        {/* <View style={styles.titleView}>
-          <Text style={styles.titleStyle}>키트 정보</Text>
-        </View> */}
         <View style={styles.contentView}>
           <View style={styles.ChapterButtonStyle}>
             <ChapterButton
               buttonColor={chapterStep < 1 ? '#DBDBDB' : '#3AE5D1'}
               title={'조립영상'}
-              onPress={() => navigate('VideoScreen')}
+              onPress={() => navigate('VideoScreen', {kitCode: kitCode})}
               disabled={chapterStep < 1}
             />
             <ChapterButton
               buttonColor={chapterStep < 2 ? '#DBDBDB' : '#3AE5D1'}
               title={'코드설명'}
-              onPress={() => navigate('CodeCoach')}
+              onPress={() => navigate('CodeCoach', {kitCode: kitCode})}
               disabled={chapterStep < 2}
             />
           </View>
@@ -45,13 +69,13 @@ class KitInfo extends Component {
             <ChapterButton
               buttonColor={chapterStep < 3 ? '#DBDBDB' : '#3AE5D1'}
               title={'커스터마이징'}
-              onPress={() => navigate('CustomCode')}
+              onPress={() => navigate('CustomCode', {kitCode: kitCode})}
               disabled={chapterStep < 3}
             />
             <ChapterButton
               buttonColor={chapterStep < 4 ? '#DBDBDB' : '#3AE5D1'}
               title={'퀴즈'}
-              onPress={() => navigate('Quiz')}
+              onPress={() => navigate('Quiz', {kitCode: kitCode})}
               disabled={chapterStep < 4}
             />
           </View>
