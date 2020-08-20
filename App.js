@@ -34,11 +34,6 @@ class HomeScreen extends Component {
       .then((response) => this.setState({kitInfo: response.data}));
   };
 
-  constructor(props) {
-    super(props);
-    console.log('ccc');
-  }
-
   componentDidMount() {
     this._subscribe = this.props.navigation.addListener('didFocus', () => {
       this.loadKitInfo();
@@ -87,7 +82,7 @@ class HomeScreen extends Component {
         <View style={styles.contentView}>
           <View style={styles.registerView}>
             <CustomButton
-              buttonColor={'#023e71'}
+              buttonColor={'#3AE5D1'}
               title={'키트 등록하기'}
               onPress={() => navigate('RegisterKitScreen')}
             />
@@ -99,9 +94,11 @@ class HomeScreen extends Component {
                   {tableData.map((rowData, index) =>
                     rowData.map(() => (
                       <KitInfoButton
-                        buttonColor={'#3F3F3F'}
+                        buttonColor={'#4EB1D1'}
                         title={kitInfo[index].kitName}
-                        onPress={() => navigate('KitInfo')}
+                        onPress={() =>
+                          navigate('KitInfo', {kitInfo: kitInfo, index: index})
+                        }
                       />
                     )),
                   )}
@@ -187,7 +184,7 @@ const styles = StyleSheet.create({
     fontSize: 70,
     // fontFamily: 'NanumSquareRoundB',
   },
-  tableContainer: {width: '100%', flex: 1, padding: 10, paddingTop: 30},
+  tableContainer: {width: '90%', flex: 1, padding: 10, paddingTop: 30},
   header: {height: 50, backgroundColor: '#537791'},
   text: {textAlign: 'center', fontWeight: '100'},
   dataWrapper: {marginTop: -1},
