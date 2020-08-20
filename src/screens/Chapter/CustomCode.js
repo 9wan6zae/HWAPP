@@ -1,59 +1,442 @@
-// @flow
-
-// import React from 'react';
-// import {Provider} from 'react-redux';
-// import {store} from '../Bluetooth/Store';
-// import SensorTag from '../Bluetooth/SensorTag';
-
-// export default function App() {
-//   return (
-//     <Provider store={store}>
-//       <SensorTag />
-//     </Provider>
-//   );
-// }
-
 import React, {Component} from 'react';
-import {View, StyleSheet} from 'react-native';
-import YouTube from 'react-native-youtube';
+import {
+  StyleSheet,
+  Text,
+  View,
+  TouchableOpacity,
+  FlatList,
+  TextInput,
+  Alert,
+} from 'react-native';
+import RNPickerSelect from 'react-native-picker-select';
+import Axios from 'axios';
+import BleModule from './BleModule';
+//确保全局只有一个BleManager实例，BleModule类保存着蓝牙的连接信息
 
-export default class KitInfo extends Component {
+import RBSheet from 'react-native-raw-bottom-sheet';
+
+export default class App extends Component {
   static navigationOptions = {
-    title: '조립 영상',
+    title: '커스터마이징',
   };
-  render() {
+  constructor(props) {
+    super(props);
+    this.state = {
+      scaning: false,
+      isConnected: false,
+      customValues: '',
+      writeData: '',
+      receiveData: '',
+      readData: '',
+      data: [],
+      isMonitoring: false,
+    };
+    this.bluetoothReceiveData = [];
+    this.deviceMap = new Map();
+    this.BluetoothManager = new BleModule();
+  }
+
+  updateChapterStep = async () => {
+    const kitCode = this.props.navigation.state.params.kitCode;
+    Axios.patch('https://hwapp-2020.herokuapp.com/kit/updateChapterStep', {
+      userId: 'bang',
+      kitCode: kitCode,
+      step: 4,
+    });
+  };
+
+  componentDidMount() {
+    // 监听蓝牙开关
+    this.updateChapterStep();
+    this.onStateChangeListener = this.BluetoothManager.manager.onStateChange(
+      (state) => {
+        console.log('onStateChange: ', state);
+        if (state == 'PoweredOn') {
+          this.scan();
+        }
+      },
+    );
+  }
+
+  componentWillUnmount() {
+    this.BluetoothManager.destroy();
+    this.onStateChangeListener && this.onStateChangeListener.remove();
+    this.disconnectListener && this.disconnectListener.remove();
+    this.monitorListener && this.monitorListener.remove();
+  }
+
+  alert(customValues) {
+    Alert.alert('提示', customValues, [
+      {customValues: '确定', onPress: () => {}},
+    ]);
+  }
+
+  scan() {
+    if (!this.state.scaning) {
+      this.setState({scaning: true});
+      this.deviceMap.clear();
+      this.BluetoothManager.manager.startDeviceScan(
+        null,
+        null,
+        (error, device) => {
+          if (error) {
+            console.log('startDeviceScan error:', error);
+            if (error.errorCode == 102) {
+              this.alert('핸드폰 블루투스를 켜세요');
+            }
+            this.setState({scaning: false});
+          } else {
+            console.log(device.id, device.name);
+            this.deviceMap.set(device.id, device); //使用Map类型保存搜索到的蓝牙设备，确保列表不显示重复的设备
+            this.setState({data: [...this.deviceMap.values()]});
+          }
+        },
+      );
+      this.scanTimer && clearTimeout(this.scanTimer);
+      this.scanTimer = setTimeout(() => {
+        if (this.state.scaning) {
+          this.BluetoothManager.stopScan();
+          this.setState({scaning: false});
+        }
+      }, 1000); //1秒后停止搜索
+    } else {
+      this.BluetoothManager.stopScan();
+      this.setState({scaning: false});
+    }
+  }
+
+  connect(item) {
+    if (this.state.scaning) {
+      //连接的时候正在扫描，先停止扫描
+      this.BluetoothManager.stopScan();
+      this.setState({scaning: false});
+    }
+    if (this.BluetoothManager.isConnecting) {
+      console.log(
+        '현재 블루투가 연결되어 있어 다른 블루투스는 연결할 수 없습니다.',
+      );
+      return;
+    }
+    let newData = [...this.deviceMap.values()];
+    newData[item.index].isConnecting = true; //正在连接中
+    this.setState({data: newData});
+    this.BluetoothManager.connect(item.item.id)
+      .then((device) => {
+        newData[item.index].isConnecting = false;
+        this.setState({data: [newData[item.index]], isConnected: true});
+        this.onDisconnect();
+      })
+      .catch((err) => {
+        newData[item.index].isConnecting = false;
+        this.setState({data: [...newData]});
+        this.alert(err);
+      });
+  }
+
+  // read=(index)=>{
+  //     BluetoothManager.read(index)
+  //         .then(value=>{
+  //             this.setState({readData:value});
+  //         })
+  //         .catch(err=>{
+
+  //         })
+  // }
+
+  write = (index, type) => {
+    console.log(index);
+    if (this.state.customValues.length == 0) {
+      console.log(this.BluetoothManager.writeWithResponseCharacteristicUUID);
+      this.alert('정보를 입력하십시오.');
+      return;
+    }
+    this.BluetoothManager.write(this.state.customValues, index, type)
+      .then((characteristic) => {
+        this.bluetoothReceiveData = [];
+        this.setState({
+          writeData: this.state.customValues,
+          customValues: '',
+        });
+      })
+      .catch((err) => {});
+  };
+
+  //监听蓝牙断开
+  onDisconnect() {
+    this.disconnectListener = this.BluetoothManager.manager.onDeviceDisconnected(
+      this.BluetoothManager.peripheralId,
+      (error, device) => {
+        if (error) {
+          //蓝牙遇到错误自动断开
+          console.log('onDeviceDisconnected', 'device disconnect', error);
+          this.setState({
+            data: [...this.deviceMap.values()],
+            isConnected: false,
+          });
+        } else {
+          this.disconnectListener && this.disconnectListener.remove();
+          console.log(
+            'onDeviceDisconnected',
+            'device disconnect',
+            device.id,
+            device.name,
+          );
+        }
+      },
+    );
+  }
+
+  //断开蓝牙连接
+  disconnect() {
+    this.BluetoothManager.disconnect()
+      .then((res) => {
+        this.setState({data: [...this.deviceMap.values()], isConnected: false});
+      })
+      .catch((err) => {
+        this.setState({data: [...this.deviceMap.values()], isConnected: false});
+      });
+  }
+
+  renderItem = (item) => {
+    let data = item.item;
     return (
-      <View style={styles.container}>
-        <View style={styles.contentView}>
-          <YouTube
-            videoId="gQHD0vSYW9g" // The YouTube video ID
-            play // control playback of video with true/false
-            fullscreen // control whether the video should play in fullscreen or inline
-            loop // control whether the video should loop when ended
-            onReady={(e) => this.setState({isReady: true})}
-            onChangeState={(e) => this.setState({status: e.state})}
-            onChangeQuality={(e) => this.setState({quality: e.quality})}
-            onError={(e) => this.setState({error: e.error})}
-            style={styles.videoStyle}
+      <TouchableOpacity
+        activeOpacity={0.7}
+        disabled={this.state.isConnected ? true : false}
+        onPress={() => {
+          this.connect(item);
+        }}
+        style={styles.item}>
+        <View style={{flexDirection: 'row'}}>
+          <Text style={{color: 'black'}}>{data.name ? data.name : ''}</Text>
+          <Text style={{color: 'red', marginLeft: 50}}>
+            {data.isConnecting ? '연결 중...' : ''}
+          </Text>
+        </View>
+        <Text>{data.id}</Text>
+      </TouchableOpacity>
+    );
+  };
+
+  renderHeader = () => {
+    return (
+      <View style={{marginTop: 20}}>
+        <TouchableOpacity
+          activeOpacity={0.7}
+          style={[
+            styles.buttonView,
+            {marginHorizontal: 10, height: 40, alignItems: 'center'},
+          ]}
+          onPress={
+            this.state.isConnected
+              ? this.disconnect.bind(this)
+              : this.scan.bind(this)
+          }>
+          <Text style={styles.buttonText}>
+            {this.state.scaning
+              ? '검색 중'
+              : this.state.isConnected
+              ? '블루투스 연결끊기'
+              : '블루투스 검색'}
+          </Text>
+        </TouchableOpacity>
+
+        <Text style={{marginLeft: 10, marginTop: 10}}>
+          {this.state.isConnected
+            ? '현재 연결된 디바이스'
+            : '사용가능한 디바이스'}
+        </Text>
+      </View>
+    );
+  };
+
+  renderFooter = () => {
+    return (
+      <View style={{marginBottom: 30}}>
+        {this.state.isConnected ? (
+          <View>
+            {this.renderWriteView(
+              '데이터 쓰기(write)：',
+              '보내기',
+              this.BluetoothManager.writeWithUUID,
+              this.write,
+            )}
+          </View>
+        ) : (
+          <View style={{marginBottom: 20}} />
+        )}
+      </View>
+    );
+  };
+
+  renderWriteView = (label, buttonText, characteristics, onPress, state) => {
+    if (characteristics.length == 0) {
+      return null;
+    }
+    var index = this.BluetoothManager.findUuidIndex(characteristics);
+    return (
+      <View style={{marginHorizontal: 10, marginTop: 30}} behavior="padding">
+        <Text style={{color: 'black'}}>{label}</Text>
+        <Text style={styles.content}>{this.state.writeData}</Text>
+
+        <TouchableOpacity
+          key={index}
+          activeOpacity={0.7}
+          style={styles.buttonView}
+          onPress={() => {
+            onPress(index);
+          }}>
+          <Text style={styles.buttonText}>{buttonText}</Text>
+        </TouchableOpacity>
+      </View>
+    );
+  };
+
+  renderReceiveView = (label, buttonText, characteristics, onPress, state) => {
+    if (characteristics.length == 0) {
+      return null;
+    }
+    return (
+      <View style={{marginHorizontal: 10, marginTop: 30}}>
+        <Text style={{color: 'black', marginTop: 5}}>{label}</Text>
+        <Text style={styles.content}>{state}</Text>
+        {characteristics.map((item, index) => {
+          return (
+            <TouchableOpacity
+              activeOpacity={0.7}
+              style={styles.buttonView}
+              onPress={() => {
+                onPress(index);
+              }}
+              key={index}>
+              <Text style={styles.buttonText}>
+                {buttonText} ({item})
+              </Text>
+            </TouchableOpacity>
+          );
+        })}
+      </View>
+    );
+  };
+
+  RenderCustomContent = () => {
+    const kitCode = this.props.navigation.state.params.kitCode;
+    console.log(this.state.customValues);
+    if (kitCode === 'ABC-A') {
+      return (
+        <View>
+          <Text>색상1</Text>
+          <RNPickerSelect
+            onValueChange={(value) => this.setState({customValues: value})}
+            items={[
+              {label: 'RED', value: 'r'},
+              {label: 'GREEN', value: 'g'},
+              {label: 'BLUE', value: 'b'},
+            ]}
           />
         </View>
-        <View style={styles.footerView} />
+      );
+    } else if (kitCode === 'ABC-B') {
+      return (
+        <View>
+          <Text>변경할 비밀번호</Text>
+          <TextInput
+            style={styles.textForm}
+            placeholder={'비밀번호 입력'}
+            onChangeText={(value) =>
+              this.setState({customValues: 'pw' + value})
+            }
+          />
+        </View>
+      );
+    }
+  };
+
+  render() {
+    const kitCode = this.props.navigation.state.params.kitCode;
+    console.log(kitCode);
+    return (
+      <View style={styles.container}>
+        <View style={styles.titleView} />
+        <View style={styles.contentView}>
+          <this.RenderCustomContent />
+        </View>
+        <View style={styles.footerView}>
+          <TouchableOpacity
+            onPress={() => this.Standard.open()}
+            style={styles.sendButton}>
+            <Text style={styles.buttonTitle}>전송</Text>
+          </TouchableOpacity>
+        </View>
+        <RBSheet
+          ref={(ref) => {
+            this.Standard = ref;
+          }}
+          height={700}
+          openDuration={250}
+          customStyles={{
+            container: {
+              borderRadius: 20,
+              justifyContent: 'center',
+              alignItems: 'center',
+            },
+          }}>
+          <FlatList
+            renderItem={this.renderItem}
+            keyExtractor={(item) => item.id}
+            data={this.state.data}
+            ListHeaderComponent={this.renderHeader}
+            ListFooterComponent={this.renderFooter}
+            extraData={[
+              this.state.isConnected,
+              this.state.customValues,
+              this.state.receiveData,
+              this.state.readData,
+              this.state.writeData,
+              this.state.isMonitoring,
+              this.state.scaning,
+            ]}
+            keyboardShouldPersistTaps="handled"
+          />
+        </RBSheet>
       </View>
     );
   }
 }
 
 const styles = StyleSheet.create({
-  videoStyle: {
-    alignSelf: 'stretch',
-    height: 300,
+  item: {
+    flexDirection: 'column',
+    borderColor: 'rgb(235,235,235)',
+    borderStyle: 'solid',
+    borderBottomWidth: StyleSheet.hairlineWidth,
+    paddingLeft: 10,
+    paddingVertical: 8,
   },
-  backgroundVideo: {
-    position: 'absolute',
-    top: 0,
-    left: 0,
-    bottom: 0,
-    right: 0,
+  buttonView: {
+    height: 30,
+    backgroundColor: 'rgb(33, 150, 243)',
+    paddingHorizontal: 10,
+    borderRadius: 5,
+    justifyContent: 'center',
+    alignItems: 'flex-start',
+    marginTop: 10,
+  },
+  buttonText: {
+    color: 'white',
+    fontSize: 12,
+  },
+  content: {
+    marginTop: 5,
+    marginBottom: 15,
+  },
+  textInput: {
+    paddingLeft: 5,
+    paddingRight: 5,
+    backgroundColor: 'white',
+    height: 50,
+    fontSize: 16,
+    flex: 1,
   },
   container: {
     flex: 1,
@@ -69,41 +452,49 @@ const styles = StyleSheet.create({
   },
   titleView: {
     width: '100%',
-    height: '10%',
+    height: '5%',
     justifyContent: 'center',
     alignItems: 'center',
-    backgroundColor: '#9aa9ff',
+    backgroundColor: 'white',
   },
   contentView: {
     flex: 1,
-    alignContent: 'stretch',
     flexDirection: 'column',
-    justifyContent: 'center',
-    alignItems: 'center',
-    backgroundColor: '#FFF',
+    backgroundColor: 'white',
+    alignContent: 'center',
+    width: '90%',
   },
   footerView: {
     width: '100%',
-    height: '10%',
+    height: '20%',
     justifyContent: 'center',
     alignItems: 'center',
-    backgroundColor: '#FFF',
+    backgroundColor: 'white',
+    flexDirection: 'row',
   },
   titleStyle: {
     fontSize: 50,
     //fontFamily: 'NanumSquareRoundB',
   },
-  backButtonStyle: {
-    position: 'absolute',
-    left: 10,
-    top: '50%',
+  buttonStyle: {
+    height: 100,
   },
-  ChapterButtonStyle: {
-    width: '80%',
-    height: 190,
+  sendButton: {
+    minWidth: 140,
+    height: 40,
+    backgroundColor: '#4EB1D1',
     alignItems: 'center',
-    backgroundColor: 'powderblue',
-    flexDirection: 'row',
-    justifyContent: 'space-between',
+    justifyContent: 'center',
+    borderRadius: 3,
+  },
+  buttonTitle: {
+    color: '#FFFFFF',
+    fontSize: 16,
+    fontWeight: '600',
+  },
+  dataWrapper: {
+    marginTop: 0,
+    marginLeft: 20,
+    width: '95%',
   },
 });
