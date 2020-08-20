@@ -1,17 +1,47 @@
-import React, {Component} from 'react';
+import React, * as react from 'react';
 import {View, StyleSheet} from 'react-native';
 import YouTube from 'react-native-youtube';
+import Axios from 'axios';
 
-export default class KitInfo extends Component {
+export default class KitInfo extends react.Component {
   static navigationOptions = {
     title: '조립 영상',
   };
+
+  state = {
+    videoURL: '',
+  };
+
+  loadVideoURL = async () => {
+    const kitCode = this.props.navigation.state.params.kitCode;
+    Axios.get(
+      'https://hwapp-2020.herokuapp.com/kit/getKitVideoURL?kitCode=' + kitCode,
+    )
+      .then((response) => this.setState({videoURL: response.data.kitVideoURL}))
+      .then(() => console.log(this.state.videoURL));
+  };
+
+  updateChapterStep = async () => {
+    const kitCode = this.props.navigation.state.params.kitCode;
+    Axios.patch('https://hwapp-2020.herokuapp.com/kit/updateChapterStep', {
+      userId: 'bang',
+      kitCode: kitCode,
+      step: 2,
+    });
+  };
+
+  componentDidMount() {
+    this.loadVideoURL();
+    this.updateChapterStep();
+  }
+
   render() {
+    const {videoURL} = this.state;
     return (
       <View style={styles.container}>
         <View style={styles.contentView}>
           <YouTube
-            videoId="gQHD0vSYW9g" // The YouTube video ID
+            videoId={videoURL} // The YouTube video ID
             play // control playback of video with true/false
             fullscreen // control whether the video should play in fullscreen or inline
             loop // control whether the video should loop when ended
