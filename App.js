@@ -7,25 +7,33 @@ import {
   StatusBar,
   Platform,
   Button,
+  TextInput,
 } from 'react-native';
-
 import axios from 'axios';
 
 import {Table} from 'react-native-table-component';
 import {createAppContainer} from 'react-navigation';
 import {createStackNavigator} from 'react-navigation-stack';
-
-import CustomButton from './src/styles/CustomButton';
 import KitInfoButton from './src/styles/KitItem';
 
 import KitInfo from './src/screens/KitInfo';
 import RegisterKitScreen from './src/screens/RegisterKitScreen';
+import {TouchableOpacity} from 'react-native-gesture-handler';
 
 const STATUSBAR_HEIGHT = Platform.OS === 'ios' ? 20 : StatusBar.currentHeight;
 
 class HomeScreen extends Component {
+  constructor(props) {
+    super(props);
+  }
+
   state = {
     kitInfo: [],
+    serialNumber: '',
+  };
+
+  handleText = (text) => {
+    this.setState({serialNumber: text});
   };
 
   loadKitInfo = async () => {
@@ -34,11 +42,27 @@ class HomeScreen extends Component {
       .then((response) => this.setState({kitInfo: response.data}));
   };
 
+  registerKitbySerialNumber = () => {
+    axios
+      .post('https://hwapp-2020.herokuapp.com/kit/registUserKit', {
+        userId: 'bang',
+        kitCode: this.state.serialNumber,
+      })
+      .then(function (response) {
+        console.log(response);
+      })
+      .catch(function (error) {
+        console.log(error);
+      });
+    this.loadKitInfo();
+  };
+
   componentDidMount() {
     this._subscribe = this.props.navigation.addListener('didFocus', () => {
       this.loadKitInfo();
       //Put your Data loading function here instead of my this.LoadData()
     });
+    //this.loadKitInfo();
   }
 
   deleteInfo() {
@@ -49,11 +73,6 @@ class HomeScreen extends Component {
 
     this.loadKitInfo();
   }
-
-  // componentDidMount() {
-  //   console.log('mounted');
-  //   this.loadKitInfo();
-  // }
 
   render() {
     const {kitInfo} = this.state;
@@ -81,11 +100,16 @@ class HomeScreen extends Component {
         </View>
         <View style={styles.contentView}>
           <View style={styles.registerView}>
-            <CustomButton
-              buttonColor={'#3AE5D1'}
-              title={'키트 등록하기'}
-              onPress={() => navigate('RegisterKitScreen')}
+            <TextInput
+              style={styles.textForm}
+              placeholder={'시리얼 번호 입력'}
+              onChangeText={this.handleText}
             />
+            <TouchableOpacity
+              style={styles.buttonStyle}
+              onPress={() => this.registerKitbySerialNumber()}>
+              <Text style={styles.buttonTitle}>등록</Text>
+            </TouchableOpacity>
           </View>
           <View style={styles.tableContainer}>
             <View>
@@ -97,7 +121,10 @@ class HomeScreen extends Component {
                         buttonColor={'#4EB1D1'}
                         title={kitInfo[index].kitName}
                         onPress={() =>
-                          navigate('KitInfo', {kitInfo: kitInfo, index: index})
+                          navigate('KitInfo', {
+                            kitInfo: kitInfo,
+                            index: index,
+                          })
                         }
                       />
                     )),
@@ -167,11 +194,13 @@ const styles = StyleSheet.create({
   },
   registerView: {
     marginTop: 20,
-    height: '12%',
-    width: '96%',
+    height: '10%',
+    width: '85%',
     justifyContent: 'center',
     alignItems: 'center',
-    //backgroundColor: '#FF0000',
+    backgroundColor: '#3AE5D1',
+    flexDirection: 'row',
+    borderRadius: 50,
   },
   footerView: {
     width: '100%',
@@ -192,5 +221,21 @@ const styles = StyleSheet.create({
   borderStyle: {
     borderWidth: 1,
     borderColor: '#C1C0B9',
+  },
+  textForm: {
+    width: '85%',
+    height: '94%',
+    borderWidth: 5,
+    borderColor: '#3AE5D1',
+    borderRadius: 50,
+    backgroundColor: '#fff',
+  },
+  buttonStyle: {
+    width: 50,
+  },
+  buttonTitle: {
+    color: '#FFF',
+    fontWeight: 'bold',
+    textAlign: 'center',
   },
 });
