@@ -47,7 +47,10 @@ export default class App extends Component {
 
   componentDidMount() {
     // 监听蓝牙开关
-    this.updateChapterStep();
+    const chapterStep = this.props.navigation.state.params.chapterStep;
+    if (chapterStep < 4) {
+      this.updateChapterStep();
+    }
     this.onStateChangeListener = this.BluetoothManager.manager.onStateChange(
       (state) => {
         console.log('onStateChange: ', state);

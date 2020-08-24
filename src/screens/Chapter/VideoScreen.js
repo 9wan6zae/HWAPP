@@ -32,7 +32,10 @@ export default class KitInfo extends react.Component {
 
   componentDidMount() {
     this.loadVideoURL();
-    this.updateChapterStep();
+    const chapterStep = this.props.navigation.state.params.chapterStep;
+    if (chapterStep < 2) {
+      this.updateChapterStep();
+    }
   }
 
   render() {
