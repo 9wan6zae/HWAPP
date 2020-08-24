@@ -1,5 +1,5 @@
 import React, {Component} from 'react';
-import {View, Text, StyleSheet, Button, TextInput, Linking} from 'react-native';
+import {View, StyleSheet, Button, TextInput, Linking} from 'react-native';
 
 import axios from 'axios';
 
@@ -47,11 +47,11 @@ export default class RegisterKitScreen extends Component {
   render() {
     return (
       <View style={styles.container}>
-        {/* <View style={styles.headerView}>
-          <TouchableOpacity style={styles.backButtonStyle}>
-            <Text onPress={() => this.props.navigation.goBack()}>뒤로가기</Text>
-          </TouchableOpacity>
-        </View> */}
+        <View style={styles.headerView}>
+          {/* <TouchableOpacity style={styles.backButtonStyle}>
+            <Text onPress={() => this.props.navigation.goBack()}>{'<'}</Text>
+          </TouchableOpacity> */}
+        </View>
         {/* <View style={styles.titleView}>
           <Text style={styles.titleStyle}>키트 등록하기</Text>
         </View> */}
@@ -62,10 +62,9 @@ export default class RegisterKitScreen extends Component {
             onChangeText={this.handleText}
           />
           <Button
-            title="test"
+            title="등록"
             onPress={() => this.registerKitbySerialNumber()}
           />
-          <Text>{this.state.serialNumber}</Text>
         </View>
         <View style={styles.QRView}>
           {/* <QRCodeScanner
