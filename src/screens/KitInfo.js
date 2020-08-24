@@ -1,5 +1,5 @@
 import React, {Component} from 'react';
-import {View, StyleSheet} from 'react-native';
+import {View, StyleSheet, Text} from 'react-native';
 import ChapterButton from '../styles/ChapterButton';
 import {createAppContainer} from 'react-navigation';
 import {createStackNavigator} from 'react-navigation-stack';
@@ -16,15 +16,17 @@ class KitInfo extends Component {
   };
 
   state = {
-    chapterStep: '',
+    chapterStep: 0,
     kitCode: '',
+    kitName: '',
   };
 
-  loadChapterStep = async () => {
+  loadChapterStep = () => {
     const index = this.props.navigation.state.params.index;
     const kitCode = this.props.navigation.state.params.kitInfo[index].kitCode;
+    const kitName = this.props.navigation.state.params.kitInfo[index].kitName;
     this.setState({kitCode: kitCode});
-    console.log(kitCode);
+    this.setState({kitName: kitName});
     Axios.get(
       'https://hwapp-2020.herokuapp.com/kit/getChapterStep?userId=bang&kitCode=' +
         kitCode,
@@ -32,11 +34,12 @@ class KitInfo extends Component {
       .then((response) =>
         this.setState({chapterStep: response.data.chapterStep}),
       )
-      .then(() => console.log(this.state.chapterStep));
+      .then(() => console.log('chapterStep:' + this.state.chapterStep));
   };
 
   componentDidMount() {
     this._subscribe = this.props.navigation.addListener('didFocus', () => {
+      console.log('abcde');
       this.loadChapterStep();
       //Put your Data loading function here instead of my this.LoadData()
     });
@@ -45,23 +48,41 @@ class KitInfo extends Component {
   render() {
     var {navigate} = this.props.navigation;
 
-    var {chapterStep} = this.state;
+    const {chapterStep} = this.state;
+
     const {kitCode} = this.state;
+
+    const {kitName} = this.state;
 
     return (
       <View style={styles.container}>
+        <View style={styles.titleView}>
+          <View style={styles.titleStyle}>
+            <Text style={styles.titleTextStyle}>{kitName}</Text>
+          </View>
+        </View>
         <View style={styles.contentView}>
           <View style={styles.ChapterButtonStyle}>
             <ChapterButton
               buttonColor={chapterStep < 1 ? '#DBDBDB' : '#3AE5D1'}
               title={'조립영상'}
-              onPress={() => navigate('VideoScreen', {kitCode: kitCode})}
+              onPress={() =>
+                navigate('VideoScreen', {
+                  kitCode: kitCode,
+                  chapterStep: chapterStep,
+                })
+              }
               disabled={chapterStep < 1}
             />
             <ChapterButton
               buttonColor={chapterStep < 2 ? '#DBDBDB' : '#3AE5D1'}
               title={'코드설명'}
-              onPress={() => navigate('CodeCoach', {kitCode: kitCode})}
+              onPress={() =>
+                navigate('CodeCoach', {
+                  kitCode: kitCode,
+                  chapterStep: chapterStep,
+                })
+              }
               disabled={chapterStep < 2}
             />
           </View>
@@ -69,13 +90,23 @@ class KitInfo extends Component {
             <ChapterButton
               buttonColor={chapterStep < 3 ? '#DBDBDB' : '#3AE5D1'}
               title={'커스터마이징'}
-              onPress={() => navigate('CustomCode', {kitCode: kitCode})}
+              onPress={() =>
+                navigate('CustomCode', {
+                  kitCode: kitCode,
+                  chapterStep: chapterStep,
+                })
+              }
               disabled={chapterStep < 3}
             />
             <ChapterButton
               buttonColor={chapterStep < 4 ? '#DBDBDB' : '#3AE5D1'}
               title={'퀴즈'}
-              onPress={() => navigate('Quiz', {kitCode: kitCode})}
+              onPress={() =>
+                navigate('Quiz', {
+                  kitCode: kitCode,
+                  chapterStep: chapterStep,
+                })
+              }
               disabled={chapterStep < 4}
             />
           </View>
@@ -123,10 +154,20 @@ const styles = StyleSheet.create({
   },
   titleView: {
     width: '100%',
-    height: '10%',
+    height: '18%',
     justifyContent: 'center',
     alignItems: 'center',
     backgroundColor: '#FFF',
+  },
+  titleStyle: {
+    width: '60%',
+    height: '50%',
+    justifyContent: 'center',
+    alignItems: 'center',
+    backgroundColor: '#FFF',
+    borderColor: '#3AE5D1',
+    borderWidth: 5,
+    borderRadius: 50,
   },
   contentView: {
     flex: 1,
@@ -138,13 +179,13 @@ const styles = StyleSheet.create({
   },
   footerView: {
     width: '100%',
-    height: '10%',
+    height: '20%',
     justifyContent: 'center',
     alignItems: 'center',
     backgroundColor: '#FFF',
   },
-  titleStyle: {
-    fontSize: 50,
+  titleTextStyle: {
+    fontSize: 40,
     //: 'NanumSquareRoundB',
   },
   backButtonStyle: {
