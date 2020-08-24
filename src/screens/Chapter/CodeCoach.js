@@ -1,17 +1,23 @@
 import React, {Component} from 'react';
-import {View, Text, StyleSheet, TouchableOpacity, Image} from 'react-native';
+import {View, Text, StyleSheet, Image} from 'react-native';
 import RBSheet from 'react-native-raw-bottom-sheet';
 import Axios from 'axios';
 import {Pages} from 'react-native-pages';
+import FucntionButton from '../../styles/functionButton';
 
 export default class KitInfo extends Component {
   static navigationOptions = {
     title: '코드설명',
   };
 
-  state = {
-    pageIndex: '',
-  };
+  constructor(props) {
+    super(props);
+    this.state = {
+      pageIndex: '',
+      maxPage: 3,
+      codeStep: '',
+    };
+  }
 
   updateChapterStep = async () => {
     const kitCode = this.props.navigation.state.params.kitCode;
@@ -22,8 +28,48 @@ export default class KitInfo extends Component {
     });
   };
 
+  loadCodeStep = async () => {
+    const kitCode = this.props.navigation.state.params.kitCode;
+    Axios.get(
+      'https://hwapp-2020.herokuapp.com/kit/getCodeStep?userId=bang&kitCode=' +
+        kitCode,
+    ).then((response) => this.setState({codeStep: response.data.codeStep}));
+  };
+
+  updateCodeStep = async () => {
+    const kitCode = this.props.navigation.state.params.kitCode;
+    if (this.state.codeStep <= this.state.maxPage) {
+      Axios.patch('https://hwapp-2020.herokuapp.com/kit/updateCodeStep', {
+        userId: 'bang',
+        kitCode: kitCode,
+        step: this.state.codeStep,
+      });
+    }
+  };
+
   componentDidMount() {
-    this.updateChapterStep();
+    //this.updateCodeStep(-1);
+    this._subscribe = this.props.navigation.addListener('didFocus', () => {
+      this.loadCodeStep();
+      //Put your Data loading function here instead of my this.LoadData()
+    });
+  }
+
+  componentWillUnmount() {
+    const chapterStep = this.props.navigation.state.params.chapterStep;
+    if (this.state.codeStep === this.state.maxPage && chapterStep < 3) {
+      this.updateChapterStep();
+    }
+    if (this.state.codeStep !== '') {
+      this.updateCodeStep();
+    }
+  }
+
+  checkCodeStep(codeStep, index) {
+    const {maxPage} = this.state;
+    if (codeStep < maxPage && index + 1 > codeStep) {
+      this.setState({codeStep: index + 1});
+    }
   }
 
   RenderCodeIamge = (props) => {
@@ -46,10 +92,31 @@ export default class KitInfo extends Component {
     }
   };
 
+  RenderBottomSheetBtn = (props) => {
+    const {codeStep} = this.state;
+    if (props.index <= codeStep && codeStep !== '') {
+      return (
+        <FucntionButton
+          buttonColor={'#3AE5D1'}
+          title={'설명보기'}
+          disabled={false}
+          onPress={() => {
+            this.Explain.open();
+            this.setState({pageIndex: props.index});
+            this.checkCodeStep(codeStep, props.index);
+          }}
+        />
+      );
+    } else {
+      return <FucntionButton buttonColor={'#DBDBDB'} title={'설명보기'} />;
+    }
+  };
+
   render() {
     var pages = [];
-    const maxPage = 3;
+    const {maxPage} = this.state;
     const {pageIndex} = this.state;
+    const {codeStep} = this.state;
     for (let i = 0; i < maxPage; i++) {
       pages.push(
         <View style={{flex: 1, backgroundColor: 'red'}}>
@@ -57,14 +124,7 @@ export default class KitInfo extends Component {
             <this.RenderCodeIamge index={i} />
           </View>
           <View style={styles.footerView}>
-            <TouchableOpacity
-              onPress={() => {
-                this.Explain.open();
-                this.setState({pageIndex: i});
-              }}
-              style={styles.explainButton}>
-              <Text style={styles.buttonTitle}>설명보기</Text>
-            </TouchableOpacity>
+            <this.RenderBottomSheetBtn index={i} />
           </View>
         </View>,
       );
@@ -72,21 +132,28 @@ export default class KitInfo extends Component {
 
     return (
       <View style={styles.container}>
+        <View style={styles.titleView}>
+          <Text>
+            완료 개수 {codeStep} / {maxPage}
+          </Text>
+        </View>
         <Pages>{pages}</Pages>
         <RBSheet
           ref={(ref) => {
             this.Explain = ref;
           }}
+          closeOnDragDown={true}
           height={700}
           openDuration={250}
           customStyles={{
             container: {
               borderRadius: 20,
-              justifyContent: 'center',
               alignItems: 'center',
             },
           }}>
-          <this.RenderExplain index={pageIndex} />
+          <View style={styles.contentView}>
+            <this.RenderExplain index={pageIndex} />
+          </View>
         </RBSheet>
       </View>
     );
@@ -110,7 +177,7 @@ const styles = StyleSheet.create({
     width: '100%',
     height: '5%',
     justifyContent: 'center',
-    alignItems: 'center',
+    alignItems: 'flex-end',
     backgroundColor: 'white',
   },
   contentView: {
