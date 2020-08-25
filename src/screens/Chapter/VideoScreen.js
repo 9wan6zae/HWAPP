@@ -1,5 +1,5 @@
 import React, * as react from 'react';
-import {View, StyleSheet} from 'react-native';
+import {View, StyleSheet, AsyncStorage} from 'react-native';
 import YouTube from 'react-native-youtube';
 import Axios from 'axios';
 
@@ -21,20 +21,17 @@ export default class KitInfo extends react.Component {
       .then(() => console.log(this.state.videoURL));
   };
 
-  updateChapterStep = async () => {
+  storageChapterStep = async () => {
     const kitCode = this.props.navigation.state.params.kitCode;
-    Axios.patch('https://hwapp-2020.herokuapp.com/kit/updateChapterStep', {
-      userId: 'bang',
-      kitCode: kitCode,
-      step: 2,
-    });
+    console.log(kitCode);
+    await AsyncStorage.setItem('chapterStep' + kitCode, '2');
   };
 
   componentDidMount() {
     this.loadVideoURL();
     const chapterStep = this.props.navigation.state.params.chapterStep;
     if (chapterStep < 2) {
-      this.updateChapterStep();
+      this.storageChapterStep();
     }
   }
 

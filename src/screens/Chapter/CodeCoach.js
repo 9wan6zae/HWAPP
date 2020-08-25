@@ -1,7 +1,7 @@
+/* eslint-disable react-native/no-inline-styles */
 import React, {Component} from 'react';
-import {View, Text, StyleSheet, Image} from 'react-native';
+import {View, Text, StyleSheet, Image, AsyncStorage} from 'react-native';
 import RBSheet from 'react-native-raw-bottom-sheet';
-import Axios from 'axios';
 import {Pages} from 'react-native-pages';
 import FucntionButton from '../../styles/functionButton';
 
@@ -19,56 +19,39 @@ export default class KitInfo extends Component {
     };
   }
 
-  updateChapterStep = async () => {
+  storageChapterStep = () => {
     const kitCode = this.props.navigation.state.params.kitCode;
-    Axios.patch('https://hwapp-2020.herokuapp.com/kit/updateChapterStep', {
-      userId: 'bang',
-      kitCode: kitCode,
-      step: 3,
-    });
+    AsyncStorage.setItem('chapterStep' + kitCode, '3');
   };
 
   loadCodeStep = async () => {
     const kitCode = this.props.navigation.state.params.kitCode;
-    Axios.get(
-      'https://hwapp-2020.herokuapp.com/kit/getCodeStep?userId=bang&kitCode=' +
-        kitCode,
-    ).then((response) => this.setState({codeStep: response.data.codeStep}));
-  };
-
-  updateCodeStep = async () => {
-    const kitCode = this.props.navigation.state.params.kitCode;
-    if (this.state.codeStep <= this.state.maxPage) {
-      Axios.patch('https://hwapp-2020.herokuapp.com/kit/updateCodeStep', {
-        userId: 'bang',
-        kitCode: kitCode,
-        step: this.state.codeStep,
-      });
+    const storageCodeStep = await AsyncStorage.getItem('codeStep' + kitCode);
+    if (storageCodeStep === null) {
+      this.setState({codeStep: '0'});
+      AsyncStorage.setItem('codeStep' + kitCode, '0');
+    } else {
+      this.setState({codeStep: storageCodeStep});
     }
   };
 
   componentDidMount() {
-    //this.updateCodeStep(-1);
     this._subscribe = this.props.navigation.addListener('didFocus', () => {
       this.loadCodeStep();
       //Put your Data loading function here instead of my this.LoadData()
     });
   }
 
-  componentWillUnmount() {
-    const chapterStep = this.props.navigation.state.params.chapterStep;
-    if (this.state.codeStep === this.state.maxPage && chapterStep < 3) {
-      this.updateChapterStep();
-    }
-    if (this.state.codeStep !== '') {
-      this.updateCodeStep();
-    }
-  }
-
   checkCodeStep(codeStep, index) {
     const {maxPage} = this.state;
+    const chapterStep = this.props.navigation.state.params.chapterStep;
+    const kitCode = this.props.navigation.state.params.kitCode;
     if (codeStep < maxPage && index + 1 > codeStep) {
       this.setState({codeStep: index + 1});
+      AsyncStorage.setItem('codeStep' + kitCode, String(index + 1));
+    }
+    if (index + 1 === 3 && chapterStep < 3) {
+      this.storageChapterStep();
     }
   }
 

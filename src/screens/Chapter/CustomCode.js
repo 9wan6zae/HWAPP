@@ -1,3 +1,4 @@
+/* eslint-disable react-native/no-inline-styles */
 import React, {Component} from 'react';
 import {
   StyleSheet,
@@ -7,11 +8,10 @@ import {
   FlatList,
   TextInput,
   Alert,
+  AsyncStorage,
 } from 'react-native';
 import RNPickerSelect from 'react-native-picker-select';
-import Axios from 'axios';
 import BleModule from './BleModule';
-//确保全局只有一个BleManager实例，BleModule类保存着蓝牙的连接信息
 
 import RBSheet from 'react-native-raw-bottom-sheet';
 
@@ -36,25 +36,20 @@ export default class App extends Component {
     this.BluetoothManager = new BleModule();
   }
 
-  updateChapterStep = async () => {
+  storageChapterStep = async () => {
     const kitCode = this.props.navigation.state.params.kitCode;
-    Axios.patch('https://hwapp-2020.herokuapp.com/kit/updateChapterStep', {
-      userId: 'bang',
-      kitCode: kitCode,
-      step: 4,
-    });
+    await AsyncStorage.setItem('chapterStep' + kitCode, '4');
   };
 
   componentDidMount() {
-    // 监听蓝牙开关
     const chapterStep = this.props.navigation.state.params.chapterStep;
     if (chapterStep < 4) {
-      this.updateChapterStep();
+      this.storageChapterStep();
     }
     this.onStateChangeListener = this.BluetoothManager.manager.onStateChange(
       (state) => {
         console.log('onStateChange: ', state);
-        if (state == 'PoweredOn') {
+        if (state === 'PoweredOn') {
           this.scan();
         }
       },
@@ -69,8 +64,8 @@ export default class App extends Component {
   }
 
   alert(customValues) {
-    Alert.alert('提示', customValues, [
-      {customValues: '确定', onPress: () => {}},
+    Alert.alert('에러', customValues, [
+      {customValues: '확인', onPress: () => {}},
     ]);
   }
 
@@ -84,13 +79,13 @@ export default class App extends Component {
         (error, device) => {
           if (error) {
             console.log('startDeviceScan error:', error);
-            if (error.errorCode == 102) {
+            if (error.errorCode === 102) {
               this.alert('핸드폰 블루투스를 켜세요');
             }
             this.setState({scaning: false});
           } else {
             console.log(device.id, device.name);
-            this.deviceMap.set(device.id, device); //使用Map类型保存搜索到的蓝牙设备，确保列表不显示重复的设备
+            this.deviceMap.set(device.id, device);
             this.setState({data: [...this.deviceMap.values()]});
           }
         },
@@ -101,7 +96,7 @@ export default class App extends Component {
           this.BluetoothManager.stopScan();
           this.setState({scaning: false});
         }
-      }, 1000); //1秒后停止搜索
+      }, 1000); //1초 후 스캔 중지
     } else {
       this.BluetoothManager.stopScan();
       this.setState({scaning: false});
@@ -110,7 +105,7 @@ export default class App extends Component {
 
   connect(item) {
     if (this.state.scaning) {
-      //连接的时候正在扫描，先停止扫描
+      //연결할 때 스캔 중이면 중지
       this.BluetoothManager.stopScan();
       this.setState({scaning: false});
     }
@@ -121,7 +116,7 @@ export default class App extends Component {
       return;
     }
     let newData = [...this.deviceMap.values()];
-    newData[item.index].isConnecting = true; //正在连接中
+    newData[item.index].isConnecting = true; //연결 중
     this.setState({data: newData});
     this.BluetoothManager.connect(item.item.id)
       .then((device) => {
@@ -148,7 +143,7 @@ export default class App extends Component {
 
   write = (index, type) => {
     console.log(index);
-    if (this.state.customValues.length == 0) {
+    if (this.state.customValues.length === 0) {
       console.log(this.BluetoothManager.writeWithResponseCharacteristicUUID);
       this.alert('정보를 입력하십시오.');
       return;
@@ -161,16 +156,18 @@ export default class App extends Component {
           customValues: '',
         });
       })
-      .catch((err) => {});
+      .catch((err) => {
+        console.log(err);
+      });
   };
 
-  //监听蓝牙断开
+  //연결 해제
   onDisconnect() {
     this.disconnectListener = this.BluetoothManager.manager.onDeviceDisconnected(
       this.BluetoothManager.peripheralId,
       (error, device) => {
         if (error) {
-          //蓝牙遇到错误自动断开
+          //error시 자동으로 연결 해제
           console.log('onDeviceDisconnected', 'device disconnect', error);
           this.setState({
             data: [...this.deviceMap.values()],
@@ -189,13 +186,13 @@ export default class App extends Component {
     );
   }
 
-  //断开蓝牙连接
+  //연결 해제
   disconnect() {
     this.BluetoothManager.disconnect()
       .then((res) => {
         this.setState({data: [...this.deviceMap.values()], isConnected: false});
       })
-      .catch((err) => {
+      .catch(() => {
         this.setState({data: [...this.deviceMap.values()], isConnected: false});
       });
   }
@@ -273,7 +270,7 @@ export default class App extends Component {
   };
 
   renderWriteView = (label, buttonText, characteristics, onPress, state) => {
-    if (characteristics.length == 0) {
+    if (characteristics.length === 0) {
       return null;
     }
     var index = this.BluetoothManager.findUuidIndex(characteristics);
@@ -296,7 +293,7 @@ export default class App extends Component {
   };
 
   renderReceiveView = (label, buttonText, characteristics, onPress, state) => {
-    if (characteristics.length == 0) {
+    if (characteristics.length === 0) {
       return null;
     }
     return (
@@ -345,6 +342,8 @@ export default class App extends Component {
           <Text>변경할 비밀번호</Text>
           <TextInput
             style={styles.textForm}
+            keyboardType="numeric"
+            maxLength={4}
             placeholder={'비밀번호 입력'}
             onChangeText={(value) =>
               this.setState({customValues: 'pw' + value})

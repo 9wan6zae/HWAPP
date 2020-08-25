@@ -1,9 +1,8 @@
 import React, {Component} from 'react';
-import {View, StyleSheet, Text} from 'react-native';
+import {View, StyleSheet, Text, AsyncStorage} from 'react-native';
 import ChapterButton from '../styles/ChapterButton';
 import {createAppContainer} from 'react-navigation';
 import {createStackNavigator} from 'react-navigation-stack';
-import Axios from 'axios';
 
 import VideoScreen from './Chapter/VideoScreen';
 import CodeCoach from './Chapter/CodeCoach';
@@ -16,30 +15,32 @@ class KitInfo extends Component {
   };
 
   state = {
-    chapterStep: 0,
+    chapterStep: 1,
     kitCode: '',
     kitName: '',
   };
 
-  loadChapterStep = () => {
+  loadChapterStep = async () => {
     const index = this.props.navigation.state.params.index;
     const kitCode = this.props.navigation.state.params.kitInfo[index].kitCode;
     const kitName = this.props.navigation.state.params.kitInfo[index].kitName;
     this.setState({kitCode: kitCode});
     this.setState({kitName: kitName});
-    Axios.get(
-      'https://hwapp-2020.herokuapp.com/kit/getChapterStep?userId=bang&kitCode=' +
-        kitCode,
-    )
-      .then((response) =>
-        this.setState({chapterStep: response.data.chapterStep}),
-      )
-      .then(() => console.log('chapterStep:' + this.state.chapterStep));
+
+    const storageChapterStep = await AsyncStorage.getItem(
+      'chapterStep' + kitCode,
+    );
+    if (storageChapterStep === null) {
+      this.setState({chapterStep: '1'});
+      AsyncStorage.setItem('chapterStep' + kitCode, '1');
+    } else {
+      console.log('storage: ' + storageChapterStep);
+      this.setState({chapterStep: storageChapterStep});
+    }
   };
 
   componentDidMount() {
     this._subscribe = this.props.navigation.addListener('didFocus', () => {
-      console.log('abcde');
       this.loadChapterStep();
       //Put your Data loading function here instead of my this.LoadData()
     });
@@ -66,23 +67,23 @@ class KitInfo extends Component {
             <ChapterButton
               buttonColor={chapterStep < 1 ? '#DBDBDB' : '#3AE5D1'}
               title={'조립영상'}
-              onPress={() =>
+              onPress={() => {
                 navigate('VideoScreen', {
                   kitCode: kitCode,
                   chapterStep: chapterStep,
-                })
-              }
+                });
+              }}
               disabled={chapterStep < 1}
             />
             <ChapterButton
               buttonColor={chapterStep < 2 ? '#DBDBDB' : '#3AE5D1'}
               title={'코드설명'}
-              onPress={() =>
+              onPress={() => {
                 navigate('CodeCoach', {
                   kitCode: kitCode,
                   chapterStep: chapterStep,
-                })
-              }
+                });
+              }}
               disabled={chapterStep < 2}
             />
           </View>
@@ -90,23 +91,23 @@ class KitInfo extends Component {
             <ChapterButton
               buttonColor={chapterStep < 3 ? '#DBDBDB' : '#3AE5D1'}
               title={'커스터마이징'}
-              onPress={() =>
+              onPress={() => {
                 navigate('CustomCode', {
                   kitCode: kitCode,
                   chapterStep: chapterStep,
-                })
-              }
+                });
+              }}
               disabled={chapterStep < 3}
             />
             <ChapterButton
               buttonColor={chapterStep < 4 ? '#DBDBDB' : '#3AE5D1'}
               title={'퀴즈'}
-              onPress={() =>
+              onPress={() => {
                 navigate('Quiz', {
                   kitCode: kitCode,
                   chapterStep: chapterStep,
-                })
-              }
+                });
+              }}
               disabled={chapterStep < 4}
             />
           </View>
@@ -171,6 +172,7 @@ const styles = StyleSheet.create({
   },
   contentView: {
     flex: 1,
+    width: '100%',
     alignContent: 'stretch',
     flexDirection: 'column',
     justifyContent: 'center',
@@ -195,10 +197,9 @@ const styles = StyleSheet.create({
   },
   ChapterButtonStyle: {
     width: '80%',
-    height: 190,
     alignItems: 'center',
     backgroundColor: '#FFF',
     flexDirection: 'row',
-    justifyContent: 'space-between',
+    justifyContent: 'center',
   },
 });
