@@ -33,10 +33,14 @@ const styles = StyleSheet.create({
     height: 60,
     marginBottom: 5,
     borderRadius: 20,
+    borderWidth: 2,
+    borderTopColor: '#EFEFEF',
+    borderLeftColor: '#EEEEEE',
+    borderRightColor: '#EEEEEE',
+    borderBottomColor: '#CBCBCB',
   },
   title: {
     fontSize: 30,
-    color: '#FFF',
-    //fontFamily: 'NanumSquareRoundB',
+    color: '#3A3A3A',
   },
 });
