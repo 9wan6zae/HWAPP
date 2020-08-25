@@ -8,6 +8,10 @@ import {
   Platform,
   Button,
   TextInput,
+  Keyboard,
+  TouchableWithoutFeedback,
+  AsyncStorage,
+  Image,
 } from 'react-native';
 import axios from 'axios';
 
@@ -72,6 +76,7 @@ class HomeScreen extends Component {
       .catch((error) => console.log(error));
 
     this.loadKitInfo();
+    AsyncStorage.clear();
   }
 
   render() {
@@ -89,56 +94,65 @@ class HomeScreen extends Component {
     }
 
     return (
-      <View style={styles.container}>
-        <View style={styles.statusBar}>
-          <StatusBar backgroundColor="#fff" barStyle="dark-content" ax />
-        </View>
-        <View style={styles.headerView} />
-        <View style={styles.titleView}>
-          <Text style={styles.titleStyle}>HWAPP</Text>
-          <Button title="delete" onPress={() => this.deleteInfo()} />
-        </View>
-        <View style={styles.contentView}>
-          <View style={styles.registerView}>
-            <TextInput
-              style={styles.textForm}
-              placeholder={'시리얼 번호 입력'}
-              onChangeText={this.handleText}
-            />
-            <TouchableOpacity
-              style={styles.buttonStyle}
-              onPress={() => this.registerKitbySerialNumber()}>
-              <Text style={styles.buttonTitle}>등록</Text>
-            </TouchableOpacity>
+      <TouchableWithoutFeedback
+        onPress={() => {
+          Keyboard.dismiss();
+        }}>
+        <View style={styles.container}>
+          <View style={styles.statusBar}>
+            <StatusBar backgroundColor="#fff" barStyle="dark-content" ax />
           </View>
-          <View style={styles.tableContainer}>
+          <View style={styles.headerView} />
+          <View style={styles.titleView}>
+            <Image style={styles.logo} source={require('./assets/logo.png')} />
+            {/* <Button title="delete" onPress={() => this.deleteInfo()} /> */}
+          </View>
+          <View style={styles.contentView}>
+            <View style={styles.registerView}>
+              <TextInput
+                style={styles.textForm}
+                placeholder={'시리얼 번호 입력'}
+                onChangeText={this.handleText}
+                returnKeyType="done"
+                clearButtonMode="always"
+                placeholderTextColor="#BDBDBD"
+                onKeyPress={() => this.registerKitbySerialNumber()}
+              />
+              <TouchableOpacity
+                style={styles.buttonStyle}
+                onPress={() => this.registerKitbySerialNumber()}>
+                <Text style={styles.buttonTitle}>등록</Text>
+              </TouchableOpacity>
+            </View>
+            <View style={styles.tableContainer}>
+              <View>
+                <ScrollView style={styles.dataWrapper}>
+                  <Table>
+                    {tableData.map((rowData, index) =>
+                      rowData.map(() => (
+                        <KitInfoButton
+                          buttonColor={'#FFF'}
+                          title={kitInfo[index].kitName}
+                          onPress={() =>
+                            navigate('KitInfo', {
+                              kitInfo: kitInfo,
+                              index: index,
+                            })
+                          }
+                        />
+                      )),
+                    )}
+                  </Table>
+                </ScrollView>
+              </View>
+            </View>
             <View>
-              <ScrollView style={styles.dataWrapper}>
-                <Table>
-                  {tableData.map((rowData, index) =>
-                    rowData.map(() => (
-                      <KitInfoButton
-                        buttonColor={'#4EB1D1'}
-                        title={kitInfo[index].kitName}
-                        onPress={() =>
-                          navigate('KitInfo', {
-                            kitInfo: kitInfo,
-                            index: index,
-                          })
-                        }
-                      />
-                    )),
-                  )}
-                </Table>
-              </ScrollView>
+              <Text>{this.state.children}</Text>
             </View>
           </View>
-          <View>
-            <Text>{this.state.children}</Text>
-          </View>
+          <View style={styles.footerView} />
         </View>
-        <View style={styles.footerView} />
-      </View>
+      </TouchableWithoutFeedback>
     );
   }
 }
@@ -191,10 +205,11 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     //backgroundColor: '#d6ca1a',
     flexDirection: 'column',
+    marginTop: '6%',
   },
   registerView: {
     marginTop: 20,
-    height: '10%',
+    height: '11%',
     width: '85%',
     justifyContent: 'center',
     alignItems: 'center',
@@ -213,7 +228,7 @@ const styles = StyleSheet.create({
     fontSize: 70,
     // fontFamily: 'NanumSquareRoundB',
   },
-  tableContainer: {width: '90%', flex: 1, padding: 10, paddingTop: 30},
+  tableContainer: {width: '90%', flex: 1, padding: 10, paddingTop: 20},
   header: {height: 50, backgroundColor: '#537791'},
   text: {textAlign: 'center', fontWeight: '100'},
   dataWrapper: {marginTop: -1},
@@ -237,5 +252,9 @@ const styles = StyleSheet.create({
     color: '#FFF',
     fontWeight: 'bold',
     textAlign: 'center',
+  },
+  logo: {
+    width: '60%',
+    height: '60%',
   },
 });
