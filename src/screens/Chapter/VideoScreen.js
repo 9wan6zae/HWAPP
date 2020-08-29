@@ -14,7 +14,7 @@ export default class KitInfo extends react.Component {
 
   loadVideoURL = async () => {
     const kitCode = this.props.navigation.state.params.kitCode;
-    Axios.get(
+    await Axios.get(
       'https://hwapp-2020.herokuapp.com/kit/getKitVideoURL?kitCode=' + kitCode,
     )
       .then((response) => this.setState({videoURL: response.data.kitVideoURL}))

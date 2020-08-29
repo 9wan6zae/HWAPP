@@ -41,13 +41,14 @@ class HomeScreen extends Component {
   };
 
   loadKitInfo = async () => {
-    axios
+    console.log('load');
+    await axios
       .get('https://hwapp-2020.herokuapp.com/kit/getKitinfo?userId=bang')
       .then((response) => this.setState({kitInfo: response.data}));
   };
 
-  registerKitbySerialNumber = () => {
-    axios
+  registerKitbySerialNumber = async () => {
+    await axios
       .post('https://hwapp-2020.herokuapp.com/kit/registUserKit', {
         userId: 'bang',
         kitCode: this.state.serialNumber,
@@ -58,10 +59,13 @@ class HomeScreen extends Component {
       .catch(function (error) {
         console.log(error);
       });
+    console.log('register');
     this.loadKitInfo();
+    this.setState({serialNumber: ''});
   };
 
   componentDidMount() {
+    this.loadKitInfo();
     this._subscribe = this.props.navigation.addListener('didFocus', () => {
       this.loadKitInfo();
       //Put your Data loading function here instead of my this.LoadData()
@@ -69,15 +73,15 @@ class HomeScreen extends Component {
     //this.loadKitInfo();
   }
 
-  deleteInfo() {
-    axios
+  deleteInfo = async () => {
+    await axios
       .delete('https://hwapp-2020.herokuapp.com/kit/deleteUserKitInfo')
       .then((response) => console.log(response))
       .catch((error) => console.log(error));
 
     this.loadKitInfo();
     AsyncStorage.clear();
-  }
+  };
 
   render() {
     const {kitInfo} = this.state;
@@ -105,7 +109,7 @@ class HomeScreen extends Component {
           <View style={styles.headerView} />
           <View style={styles.titleView}>
             <Image style={styles.logo} source={require('./assets/logo.png')} />
-            {/* <Button title="delete" onPress={() => this.deleteInfo()} /> */}
+            <Button title="delete" onPress={() => this.deleteInfo()} />
           </View>
           <View style={styles.contentView}>
             <View style={styles.registerView}>
@@ -113,10 +117,11 @@ class HomeScreen extends Component {
                 style={styles.textForm}
                 placeholder={'시리얼 번호 입력'}
                 onChangeText={this.handleText}
+                value={this.state.serialNumber}
                 returnKeyType="done"
                 clearButtonMode="always"
                 placeholderTextColor="#BDBDBD"
-                onKeyPress={() => this.registerKitbySerialNumber()}
+                onSubmitEditing={() => this.registerKitbySerialNumber()}
               />
               <TouchableOpacity
                 style={styles.buttonStyle}
